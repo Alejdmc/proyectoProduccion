@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox spacing="20" style="-fx-padding:20; -fx-background-color:#f4f6f8;"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.proyectoproduccion.Controlador.ReportesController">
+
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="REPORTES Y ESTADÍSTICAS">
+            <font>
+                <Font size="22" />
+            </font>
+        </Label>
+        <Button text="Actualizar" onAction="#actualizarReportes"
+                style="-fx-background-color:#27ae60; -fx-text-fill:white;"/>
+    </HBox>
+
+    <Separator/>
+
+    <Label text="Órdenes de Servicio" style="-fx-font-size:16; -fx-font-weight:bold;"/>
+
+    <HBox spacing="20">
+
+        <VBox style="-fx-background-color:white; -fx-padding:20; -fx-border-radius:10; -fx-background-radius:10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="Total Órdenes" style="-fx-text-fill:#7f8c8d;"/>
+            <Label fx:id="valorOrdenes" style="-fx-font-size:28; -fx-font-weight:bold; -fx-text-fill:#2c3e50;" text="0" />
+        </VBox>
+
+        <VBox style="-fx-background-color:white; -fx-padding:20; -fx-border-radius:10; -fx-background-radius:10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="En Proceso" style="-fx-text-fill:#7f8c8d;"/>
+            <Label fx:id="valorProceso" style="-fx-font-size:28; -fx-font-weight:bold; -fx-text-fill:#f39c12;" text="0" />
+        </VBox>
+
+        <VBox style="-fx-background-color:white; -fx-padding:20; -fx-border-radius:10; -fx-background-radius:10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="Entregadas" style="-fx-text-fill:#7f8c8d;"/>
+            <Label fx:id="valorEntregadas" style="-fx-font-size:28; -fx-font-weight:bold; -fx-text-fill:#27ae60;" text="0" />
+        </VBox>
+
+    </HBox>
+
+    <Separator/>
+
+    <Label text="Registros del Sistema" style="-fx-font-size:16; -fx-font-weight:bold;"/>
+
+    <HBox spacing="20">
+
+        <VBox style="-fx-background-color:white; -fx-padding:20; -fx-border-radius:10; -fx-background-radius:10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="Clientes Registrados" style="-fx-text-fill:#7f8c8d;"/>
+            <Label fx:id="valorClientes" style="-fx-font-size:28; -fx-font-weight:bold; -fx-text-fill:#3498db;" text="0" />
+        </VBox>
+
+        <VBox style="-fx-background-color:white; -fx-padding:20; -fx-border-radius:10; -fx-background-radius:10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="Vehículos Registrados" style="-fx-text-fill:#7f8c8d;"/>
+            <Label fx:id="valorVehiculos" style="-fx-font-size:28; -fx-font-weight:bold; -fx-text-fill:#9b59b6;" text="0" />
+        </VBox>
+
+        <VBox style="-fx-background-color:white; -fx-padding:20; -fx-border-radius:10; -fx-background-radius:10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 5, 0, 0, 2);">
+            <Label text="Ingresos Totales" style="-fx-text-fill:#7f8c8d;"/>
+            <Label fx:id="valorIngresos" style="-fx-font-size:28; -fx-font-weight:bold; -fx-text-fill:#27ae60;" text="0.00" />
+        </VBox>
+
+    </HBox>
+
+</VBox>

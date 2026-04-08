@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="mainLayout" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25" fx:controller="com.proyectoproduccion.Controlador.LayoutController">
+
+    <left>
+        <VBox prefWidth="220" spacing="15" style="-fx-background-color: #1f2d3d;">
+
+            <padding>
+                <Insets left="10" right="10" top="20" />
+            </padding>
+
+            <Label fx:id="lblSistTall" text="SISTEMA DE TALLER" textFill="WHITE">
+                <font>
+                    <Font size="16" />
+                </font>
+            </Label>
+
+            <Separator />
+
+            <Button fx:id="btnClientes" maxWidth="Infinity" onAction="#irClientes" text="Clientes" />
+
+            <Button fx:id="btnVehiculos" maxWidth="Infinity" onAction="#irVehiculos" text="Vehículos" />
+
+            <Button fx:id="btnOrdenes" maxWidth="Infinity" onAction="#irOrdenes" text="Órdenes" />
+
+            <Button fx:id="btnReportes" maxWidth="Infinity" onAction="#irReportes" text="Reportes" />
+
+        </VBox>
+    </left>
+
+</BorderPane>

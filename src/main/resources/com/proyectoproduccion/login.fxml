@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox alignment="CENTER" spacing="15"
+      xmlns="http://javafx.com/javafx/21"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.proyectoproduccion.Controlador.LoginController"
+      style="-fx-background-color:#f4f6f8; -fx-padding:40;">
+
+    <Label text="SISTEMA DE TALLER"
+           style="-fx-font-size:22; -fx-font-weight:bold;"/>
+
+    <Label text="Conexión a Base de Datos"
+           style="-fx-font-size:13; -fx-text-fill:#7f8c8d;"/>
+
+    <TextField fx:id="fieldUsuario"
+               promptText="Usuario MySQL"
+               prefWidth="250"
+               text="root"/>
+
+    <PasswordField fx:id="fieldPassword"
+                   promptText="Contraseña MySQL"
+                   prefWidth="250"/>
+
+    <Button text="Ingresar"
+            onAction="#login"
+            prefWidth="250"
+            style="-fx-background-color:#2e86de; -fx-text-fill:white;"/>
+
+</VBox>
