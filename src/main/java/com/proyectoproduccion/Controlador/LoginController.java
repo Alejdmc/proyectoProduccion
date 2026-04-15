@@ -1,6 +1,7 @@
 package com.proyectoproduccion.Controlador;
 
 import com.proyectoproduccion.Util.Conexion;
+import com.proyectoproduccion.Util.ConfigDB;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -17,21 +18,51 @@ public class LoginController {
     private PasswordField fieldPassword;
 
     @FXML
+    private TextField fieldHost;
+
+    @FXML
+    private TextField fieldPort;
+
+    @FXML
+    private void initialize() {
+        // Cargar valores desde database.properties
+        if (fieldHost != null) {
+            fieldHost.setText(ConfigDB.getHost());
+        }
+        if (fieldPort != null) {
+            fieldPort.setText(ConfigDB.getPort());
+        }
+        if (fieldUsuario != null) {
+            fieldUsuario.setText(ConfigDB.getUser());
+        }
+        if (fieldPassword != null) {
+            fieldPassword.setText(ConfigDB.getPassword());
+        }
+    }
+
+    @FXML
     private void login() {
 
         String user = fieldUsuario.getText().trim();
         String pass = fieldPassword.getText();
+        String host = fieldHost != null ? fieldHost.getText().trim() : "localhost";
+        String port = fieldPort != null ? fieldPort.getText().trim() : "3306";
 
         if (user.isEmpty()) {
             mostrarError("Ingrese el usuario de la base de datos");
             return;
         }
 
-        // Intentar conectar a MySQL con las credenciales ingresadas
-        if (Conexion.probarConexion(user, pass)) {
+        if (host.isEmpty()) {
+            host = "localhost";
+        }
 
-            // Guardar credenciales para toda la sesión
-            Conexion.setCredenciales(user, pass);
+        if (port.isEmpty()) {
+            port = "3306";
+        }
+
+        // Intentar conectar a MySQL con las credenciales ingresadas
+        if (Conexion.probarConexion(host, port, user, pass)) {
 
             try {
                 FXMLLoader loader = new FXMLLoader(
@@ -40,6 +71,7 @@ public class LoginController {
 
                 Stage stage = (Stage) fieldUsuario.getScene().getWindow();
                 stage.setScene(new Scene(loader.load()));
+                stage.setMaximized(true);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -47,7 +79,16 @@ public class LoginController {
 
         } else {
 
-            mostrarError("No se pudo conectar a la base de datos.\nVerifique usuario, contraseña y que MySQL esté corriendo.");
+            mostrarError("No se pudo conectar a la base de datos.\n\n" +
+                        "Configuración actual:\n" +
+                        "Host: " + host + "\n" +
+                        "Puerto: " + port + "\n" +
+                        "Usuario: " + user + "\n\n" +
+                        "Verifica que:\n" +
+                        "• MySQL esté corriendo\n" +
+                        "• El host y puerto sean correctos\n" +
+                        "• Las credenciales sean válidas\n" +
+                        "• La base de datos 'taller_db' exista");
 
         }
     }

@@ -6,35 +6,58 @@ import java.sql.SQLException;
 
 public class Conexion {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/taller_db?useSSL=false&serverTimezone=UTC";
-    private static String user = "";
-    private static String password = "";
+    // La configuración se carga automáticamente desde database.properties
+    // Si no existe el archivo, usa valores por defecto
 
     /**
-     * Configura las credenciales de la base de datos.
-     * Se llama desde el LoginController al autenticarse.
-     */
-    public static void setCredenciales(String usuario, String contrasena) {
-        user = usuario;
-        password = contrasena;
-    }
-
-    /**
-     * Intenta conectar con las credenciales proporcionadas.
-     * Lanza SQLException si las credenciales son incorrectas o la BD no está disponible.
+     * Obtiene una conexión a la base de datos usando la configuración
+     * del archivo database.properties
      */
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, user, password);
+        String url = ConfigDB.getURL();
+        String user = ConfigDB.getUser();
+        String password = ConfigDB.getPassword();
+        
+        return DriverManager.getConnection(url, user, password);
     }
 
     /**
-     * Prueba la conexión. Retorna true si las credenciales son válidas.
+     * Prueba la conexión con la configuración del archivo database.properties
      */
-    public static boolean probarConexion(String usuario, String contrasena) {
-        try (Connection conn = DriverManager.getConnection(URL, usuario, contrasena)) {
+    public static boolean probarConexion() {
+        try (Connection conn = getConnection()) {
+            return conn != null && !conn.isClosed();
+        } catch (SQLException e) {
+            System.err.println("Error al conectar: " + e.getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Prueba la conexión con credenciales específicas (para el login manual)
+     */
+    public static boolean probarConexion(String host, String port, String usuario, String contrasena) {
+        String urlPrueba = "jdbc:mysql://" + host + ":" + port + "/" + 
+                          ConfigDB.getDatabase() + "?useSSL=false&serverTimezone=UTC";
+        try (Connection conn = DriverManager.getConnection(urlPrueba, usuario, contrasena)) {
             return conn != null && !conn.isClosed();
         } catch (SQLException e) {
             return false;
         }
+    }
+
+    /**
+     * Obtiene la información de conexión actual (para debugging)
+     */
+    public static String getInfoConexion() {
+        return "Host: " + ConfigDB.getHost() + ", Puerto: " + ConfigDB.getPort() + 
+               ", Base de datos: " + ConfigDB.getDatabase();
+    }
+
+    /**
+     * Muestra la configuración actual
+     */
+    public static void mostrarConfiguracion() {
+        ConfigDB.mostrarConfiguracion();
     }
 }
