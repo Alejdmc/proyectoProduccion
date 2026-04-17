@@ -15,10 +15,22 @@ public class Conexion {
      */
     public static Connection getConnection() throws SQLException {
         String url = ConfigDB.getURL();
-        String user = ConfigDB.getUser();
-        String password = ConfigDB.getPassword();
+        String dbType = ConfigDB.getDbType();
         
-        return DriverManager.getConnection(url, user, password);
+        try {
+            // Cargar el driver apropiado
+            if ("sqlite".equals(dbType)) {
+                Class.forName("org.sqlite.JDBC");
+                return DriverManager.getConnection(url);
+            } else {
+                // MySQL sí necesita credenciales
+                String user = ConfigDB.getUser();
+                String password = ConfigDB.getPassword();
+                return DriverManager.getConnection(url, user, password);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new SQLException("Driver no encontrado: " + e.getMessage());
+        }
     }
 
     /**

@@ -1,0 +1,44 @@
+==========================================
+  MYSQL + SQLITE - COMPLETADO
+==========================================
+
+TU APLICACION AHORA SOPORTA 2 BASES DE DATOS!
+
+------------------------------------------
+ESTADO ACTUAL:
+------------------------------------------
+✅ MySQL: FUNCIONANDO
+   - Servidor: 172.30.16.52
+   - Tablas: creadas
+   - Datos: insertados
+
+✅ SQLite: DISPONIBLE
+   - Listo para usar
+   - Sin servidor necesario
+
+------------------------------------------
+COMANDOS RAPIDOS:
+------------------------------------------
+
+1. SEGUIR CON MYSQL (ya funciona):
+   .\iniciar.ps1
+
+2. CAMBIAR A SQLITE:
+   .\setup-sqlite.ps1
+   .\cambiar-bd.ps1 sqlite
+   .\iniciar.ps1
+
+3. VOLVER A MYSQL:
+   .\cambiar-bd.ps1 mysql
+   .\iniciar.ps1
+
+------------------------------------------
+ARCHIVOS DE AYUDA:
+------------------------------------------
+- GUIA_MYSQL_SQLITE.md    (guia completa)
+- RESUMEN_MYSQL_SQLITE.md (resumen rapido)
+
+==========================================
+LISTO PARA USAR!
+==========================================
+

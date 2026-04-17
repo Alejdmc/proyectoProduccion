@@ -14,11 +14,12 @@ public class ConfigDB {
     private static boolean cargado = false;
 
     // Valores por defecto si no se encuentra el archivo
-    private static final String DEFAULT_HOST = "jdbc:mysql://172.30.16.52:3306/taller_db";
+    private static final String DEFAULT_HOST = "localhost";
     private static final String DEFAULT_PORT = "3306";
     private static final String DEFAULT_DATABASE = "taller_db";
     private static final String DEFAULT_USER = "root";
     private static final String DEFAULT_PASSWORD = "";
+    private static final String DEFAULT_DB_TYPE = "mysql"; // mysql o sqlite
 
     /**
      * Carga la configuración desde el archivo database.properties
@@ -60,6 +61,7 @@ public class ConfigDB {
      * Carga valores por defecto si no existe el archivo
      */
     private static void cargarValoresPorDefecto() {
+        properties.setProperty("db.type", DEFAULT_DB_TYPE);
         properties.setProperty("db.host", DEFAULT_HOST);
         properties.setProperty("db.port", DEFAULT_PORT);
         properties.setProperty("db.name", DEFAULT_DATABASE);
@@ -109,12 +111,29 @@ public class ConfigDB {
     }
 
     /**
+     * Obtiene el tipo de base de datos (mysql o sqlite)
+     */
+    public static String getDbType() {
+        cargarConfiguracion();
+        return properties.getProperty("db.type", DEFAULT_DB_TYPE).toLowerCase();
+    }
+
+    /**
      * Obtiene la URL completa de conexión JDBC
      */
     public static String getURL() {
         cargarConfiguracion();
-        return "jdbc:mysql://" + getHost() + ":" + getPort() + "/" + 
-               getDatabase() + "?useSSL=false&serverTimezone=UTC";
+        String dbType = getDbType();
+        
+        if ("sqlite".equals(dbType)) {
+            // Para SQLite, usar un archivo local
+            String dbFile = properties.getProperty("db.file", "taller_db.sqlite");
+            return "jdbc:sqlite:" + dbFile;
+        } else {
+            // Para MySQL (por defecto)
+            return "jdbc:mysql://" + getHost() + ":" + getPort() + "/" + 
+                   getDatabase() + "?useSSL=false&serverTimezone=UTC";
+        }
     }
 
     /**
@@ -125,12 +144,18 @@ public class ConfigDB {
         System.out.println("===========================================");
         System.out.println("  Configuración de Base de Datos");
         System.out.println("===========================================");
-        System.out.println("Host:     " + getHost());
-        System.out.println("Puerto:   " + getPort());
-        System.out.println("Database: " + getDatabase());
-        System.out.println("Usuario:  " + getUser());
-        String pwd = getPassword();
-        System.out.println("Password: " + (pwd.isEmpty() ? "(vacía)" : "***"));
+        System.out.println("Tipo:     " + getDbType().toUpperCase());
+        
+        if ("sqlite".equals(getDbType())) {
+            System.out.println("Archivo:  " + properties.getProperty("db.file", "taller_db.sqlite"));
+        } else {
+            System.out.println("Host:     " + getHost());
+            System.out.println("Puerto:   " + getPort());
+            System.out.println("Database: " + getDatabase());
+            System.out.println("Usuario:  " + getUser());
+            String pwd = getPassword();
+            System.out.println("Password: " + (pwd.isEmpty() ? "(vacía)" : "***"));
+        }
         System.out.println("URL:      " + getURL());
         System.out.println("===========================================");
     }
