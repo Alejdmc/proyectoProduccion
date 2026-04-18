@@ -12,6 +12,7 @@ public class ConfigDB {
 
     private static Properties properties = new Properties();
     private static boolean cargado = false;
+    private static String tipoSeleccionado = null;
 
     // Valores por defecto si no se encuentra el archivo
     private static final String DEFAULT_HOST = "localhost";
@@ -19,11 +20,12 @@ public class ConfigDB {
     private static final String DEFAULT_DATABASE = "taller_db";
     private static final String DEFAULT_USER = "root";
     private static final String DEFAULT_PASSWORD = "";
-    private static final String DEFAULT_DB_TYPE = "mysql"; // mysql o sqlite
+    private static final String DEFAULT_DB_TYPE = "mysql";
 
-    /**
-     * Carga la configuración desde el archivo database.properties
-     */
+    public static void setDbType(String tipo) {
+        tipoSeleccionado = tipo.toLowerCase();
+    }
+
     public static void cargarConfiguracion() {
         if (cargado) {
             return; // Ya está cargado
@@ -110,10 +112,10 @@ public class ConfigDB {
         return properties.getProperty("db.password", DEFAULT_PASSWORD);
     }
 
-    /**
-     * Obtiene el tipo de base de datos (mysql o sqlite)
-     */
     public static String getDbType() {
+        if (tipoSeleccionado != null) {
+            return tipoSeleccionado;
+        }
         cargarConfiguracion();
         return properties.getProperty("db.type", DEFAULT_DB_TYPE).toLowerCase();
     }
@@ -136,28 +138,18 @@ public class ConfigDB {
         }
     }
 
-    /**
-     * Muestra la configuración actual (sin mostrar la contraseña completa)
-     */
     public static void mostrarConfiguracion() {
         cargarConfiguracion();
-        System.out.println("===========================================");
-        System.out.println("  Configuración de Base de Datos");
-        System.out.println("===========================================");
-        System.out.println("Tipo:     " + getDbType().toUpperCase());
-        
+        System.out.println("Configuracion de Base de Datos");
+        System.out.println("Tipo: " + getDbType().toUpperCase());
+
         if ("sqlite".equals(getDbType())) {
-            System.out.println("Archivo:  " + properties.getProperty("db.file", "taller_db.sqlite"));
+            System.out.println("Archivo: " + properties.getProperty("db.file", "taller_db.sqlite"));
         } else {
-            System.out.println("Host:     " + getHost());
-            System.out.println("Puerto:   " + getPort());
+            System.out.println("Host: " + getHost());
+            System.out.println("Puerto: " + getPort());
             System.out.println("Database: " + getDatabase());
-            System.out.println("Usuario:  " + getUser());
-            String pwd = getPassword();
-            System.out.println("Password: " + (pwd.isEmpty() ? "(vacía)" : "***"));
+            System.out.println("Usuario: " + getUser());
         }
-        System.out.println("URL:      " + getURL());
-        System.out.println("===========================================");
     }
 }
-

@@ -1,13 +1,3 @@
--- =====================================================
--- BASE DE DATOS: Sistema de Taller - Proyecto Produccion
--- Motor: SQLite
--- =====================================================
-
--- SQLite no necesita CREATE DATABASE, usa archivos
-
--- =====================================================
--- TABLA: clientes (entidad padre)
--- =====================================================
 CREATE TABLE IF NOT EXISTS clientes (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     nombre      TEXT NOT NULL,
@@ -16,9 +6,6 @@ CREATE TABLE IF NOT EXISTS clientes (
     direccion   TEXT
 );
 
--- =====================================================
--- TABLA: vehiculos (FK → clientes)
--- =====================================================
 CREATE TABLE IF NOT EXISTS vehiculos (
     id          INTEGER PRIMARY KEY AUTOINCREMENT,
     placa       TEXT NOT NULL UNIQUE,
@@ -31,9 +18,6 @@ CREATE TABLE IF NOT EXISTS vehiculos (
         ON DELETE RESTRICT
 );
 
--- =====================================================
--- TABLA: ordenes
--- =====================================================
 CREATE TABLE IF NOT EXISTS ordenes (
     id               INTEGER PRIMARY KEY AUTOINCREMENT,
     cliente_id       INTEGER NOT NULL,
@@ -54,9 +38,6 @@ CREATE TABLE IF NOT EXISTS ordenes (
         ON DELETE RESTRICT
 );
 
--- =====================================================
--- INDICES (solo los necesarios)
--- =====================================================
 CREATE INDEX IF NOT EXISTS idx_vehiculo_cliente ON vehiculos(cliente_id);
 CREATE INDEX IF NOT EXISTS idx_orden_cliente ON ordenes(cliente_id);
 CREATE INDEX IF NOT EXISTS idx_orden_vehiculo ON ordenes(vehiculo_id);

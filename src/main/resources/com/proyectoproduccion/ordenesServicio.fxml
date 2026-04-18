@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+
+<VBox spacing="15" style="-fx-padding:20; -fx-background-color:#f4f6f8;"
+      xmlns="http://javafx.com/javafx/25"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.proyectoproduccion.Controlador.OrdenesController">
+
+    <!-- Título -->
+    <HBox alignment="CENTER_LEFT" spacing="15">
+        <Label text="ÓRDENES DE SERVICIO">
+            <font>
+                <Font size="22" />
+            </font>
+        </Label>
+    </HBox>
+
+    <!-- Formulario de orden -->
+    <HBox spacing="10" alignment="CENTER_LEFT">
+        <Label text="Cliente:" />
+        <ComboBox fx:id="comboCliente" prefWidth="180" promptText="Seleccionar cliente" />
+        <Button text="+" style="-fx-background-color:#27ae60; -fx-text-fill:white; -fx-font-weight:bold;" onAction="#nuevoClienteRapido" />
+
+        <Label text="Vehículo:" />
+        <ComboBox fx:id="comboVehiculo" prefWidth="200" promptText="Seleccionar vehículo" />
+        <Button text="+" style="-fx-background-color:#27ae60; -fx-text-fill:white; -fx-font-weight:bold;" onAction="#nuevoVehiculoRapido" />
+
+        <Label text="Estado:" />
+        <ComboBox fx:id="comboEstado" prefWidth="150" promptText="Seleccionar estado">
+            <items>
+                <FXCollections fx:factory="observableArrayList">
+                    <String fx:value="Pendiente" />
+                    <String fx:value="En Proceso" />
+                    <String fx:value="Completada" />
+                    <String fx:value="Cancelada" />
+                </FXCollections>
+            </items>
+        </ComboBox>
+    </HBox>
+
+    <!-- Botones CRUD -->
+    <HBox spacing="10">
+        <Button text="Agregar Orden" style="-fx-background-color:#27ae60; -fx-text-fill:white;" onAction="#agregarOrden" />
+        <Button text="Editar" style="-fx-background-color:#3498db; -fx-text-fill:white;" onAction="#editarOrden" />
+        <Button text="Eliminar" style="-fx-background-color:#e74c3c; -fx-text-fill:white;" onAction="#eliminarOrden" />
+    </HBox>
+
+    <!-- Tabla de órdenes -->
+    <TableView fx:id="tablaOrdenes" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colId" prefWidth="50" text="ID" />
+            <TableColumn fx:id="colCliente" prefWidth="180" text="Cliente" />
+            <TableColumn fx:id="colVehiculo" prefWidth="180" text="Vehículo" />
+            <TableColumn fx:id="colEstado" prefWidth="100" text="Estado" />
+            <TableColumn fx:id="colTotal" prefWidth="120" text="Total ($)" />
+        </columns>
+    </TableView>
+
+    <!-- Sección de cálculos -->
+    <HBox spacing="20" alignment="CENTER_LEFT">
+        <Label text="Cálculo de Costos" style="-fx-font-weight:bold; -fx-font-size:14;" />
+        <Button text="Generar Comprobante" style="-fx-background-color:#3498db; -fx-text-fill:white;" onAction="#generarComprobante" />
+        <Button text="Ver Resumen Total" style="-fx-background-color:#3498db; -fx-text-fill:white;" onAction="#verResumenTotal" />
+    </HBox>
+
+    <HBox spacing="15" alignment="CENTER_LEFT">
+        <Label text="Repuestos ($):" />
+        <TextField fx:id="fieldRepuestos" prefWidth="100" promptText="0.00" />
+
+        <Label text="Horas Trabajo:" />
+        <TextField fx:id="fieldHoras" prefWidth="80" promptText="0" />
+
+        <Label text="Costo/Hora ($):" />
+        <TextField fx:id="fieldCostoHora" prefWidth="100" promptText="0.00" />
+
+        <Button text="Calcular" style="-fx-background-color:#27ae60; -fx-text-fill:white;" onAction="#calcularPrecio" />
+    </HBox>
+
+    <!-- Resultados -->
+    <HBox spacing="30" alignment="CENTER_LEFT" style="-fx-padding:10; -fx-background-color:#ecf0f1; -fx-background-radius:5;">
+        <VBox spacing="3" alignment="CENTER">
+            <Label text="Mano de Obra" style="-fx-font-size:11; -fx-text-fill:#7f8c8d;" />
+            <Label fx:id="labelManoObra" text="$$0.00" style="-fx-font-weight:bold;" />
+        </VBox>
+        <VBox spacing="3" alignment="CENTER">
+            <Label text="Subtotal" style="-fx-font-size:11; -fx-text-fill:#7f8c8d;" />
+            <Label fx:id="labelSubtotal" text="$$0.00" style="-fx-font-weight:bold;" />
+        </VBox>
+        <VBox spacing="3" alignment="CENTER">
+            <Label text="Total (IVA 19%)" style="-fx-font-size:11; -fx-text-fill:#7f8c8d;" />
+            <Label fx:id="labelTotal" text="$$0.00" style="-fx-font-weight:bold;" />
+        </VBox>
+        <VBox spacing="3" alignment="CENTER">
+            <Label text="Promedio" style="-fx-font-size:11; -fx-text-fill:#7f8c8d;" />
+            <Label fx:id="labelPromedio" text="$$0.00" style="-fx-font-weight:bold;" />
+        </VBox>
+    </HBox>
+
+</VBox>

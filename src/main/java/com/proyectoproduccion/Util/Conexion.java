@@ -6,24 +6,15 @@ import java.sql.SQLException;
 
 public class Conexion {
 
-    // La configuración se carga automáticamente desde database.properties
-    // Si no existe el archivo, usa valores por defecto
-
-    /**
-     * Obtiene una conexión a la base de datos usando la configuración
-     * del archivo database.properties
-     */
     public static Connection getConnection() throws SQLException {
         String url = ConfigDB.getURL();
         String dbType = ConfigDB.getDbType();
         
         try {
-            // Cargar el driver apropiado
             if ("sqlite".equals(dbType)) {
                 Class.forName("org.sqlite.JDBC");
                 return DriverManager.getConnection(url);
             } else {
-                // MySQL sí necesita credenciales
                 String user = ConfigDB.getUser();
                 String password = ConfigDB.getPassword();
                 return DriverManager.getConnection(url, user, password);
@@ -33,9 +24,6 @@ public class Conexion {
         }
     }
 
-    /**
-     * Prueba la conexión con la configuración del archivo database.properties
-     */
     public static boolean probarConexion() {
         try (Connection conn = getConnection()) {
             return conn != null && !conn.isClosed();
@@ -45,9 +33,6 @@ public class Conexion {
         }
     }
 
-    /**
-     * Prueba la conexión con credenciales específicas (para el login manual)
-     */
     public static boolean probarConexion(String host, String port, String usuario, String contrasena) {
         String urlPrueba = "jdbc:mysql://" + host + ":" + port + "/" + 
                           ConfigDB.getDatabase() + "?useSSL=false&serverTimezone=UTC";
@@ -56,20 +41,5 @@ public class Conexion {
         } catch (SQLException e) {
             return false;
         }
-    }
-
-    /**
-     * Obtiene la información de conexión actual (para debugging)
-     */
-    public static String getInfoConexion() {
-        return "Host: " + ConfigDB.getHost() + ", Puerto: " + ConfigDB.getPort() + 
-               ", Base de datos: " + ConfigDB.getDatabase();
-    }
-
-    /**
-     * Muestra la configuración actual
-     */
-    public static void mostrarConfiguracion() {
-        ConfigDB.mostrarConfiguracion();
     }
 }

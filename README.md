@@ -1,397 +1,176 @@
-# 🚗 Sistema de Taller - Gestión de Órdenes de Servicio
+# Sistema de Taller - Gestión de Órdenes de Servicio
 
 Sistema de escritorio para gestión de talleres mecánicos desarrollado en JavaFX.
 
-**Compatible con Windows y Mac** 🪟 🍎
+Compatible con Windows y Mac. Soporta MySQL y SQLite.
 
-## ✨ Características
+## Características
 
-- 🚗 **Gestión de Vehículos** - Registro y control de vehículos
-- 👥 **Gestión de Clientes** - Base de datos de clientes
-- 📋 **Órdenes de Servicio** - Seguimiento completo de reparaciones
-- 💰 **Cálculo Automático** - Presupuestos con IVA incluido
-- 📊 **Reportes** - Estadísticas y análisis de negocio
-- 🔐 **Configuración Automática** - Conexión sin login manual
-- 🌍 **Multi-plataforma** - Funciona en Windows y Mac
+- Gestión de Clientes
+- Gestión de Vehículos
+- Órdenes de Servicio con seguimiento de estados
+- Cálculo automático de costos con IVA
+- Generación de comprobantes
+- Resumen financiero del taller
+- Selección de base de datos al iniciar (MySQL o SQLite)
 
----
+## Requisitos
 
-## 🚀 Inicio Rápido
+- Java 21 o superior
+- Maven (incluido en el proyecto)
+- MySQL 8.0+ (opcional, si se usa MySQL)
 
-### 1. Requisitos
+## Instalación
 
-- ✅ **Java 21 o superior** (JDK)
-- ✅ **Maven** (incluido con el proyecto)
-- ✅ **MySQL 8.0+** (XAMPP recomendado)
-- ✅ **MySQL Workbench** (opcional, para gestión de BD)
+### 1. Clonar o descargar el proyecto
 
-### 2. Configuración (Primera vez)
+### 2. Crear la base de datos
 
-#### 🪟 Para Windows
-
-```powershell
-# 1. Configurar credenciales
-copy database.properties.example database.properties
-notepad database.properties
-
-# 2. Iniciar XAMPP → Start MySQL
-
-# 3. Ejecutar
-.\iniciar.ps1
+Con MySQL:
+```sql
+source database.sql;
 ```
 
-**📖 Guía detallada:** Ver `README.md` sección Windows
+Con SQLite: El archivo `taller_db.sqlite` ya está incluido.
 
-#### 🍎 Para Mac
+### 3. Configurar conexión (solo para MySQL)
 
-```bash
-# 1. Configurar credenciales
-cp database.properties.mac database.properties
-nano database.properties
+Editar `database.properties`:
 
-# 2. Iniciar MySQL
-sudo /Applications/XAMPP/xamppfiles/xampp startmysql
-
-# 3. Ejecutar
-chmod +x iniciar-mac.sh
-./iniciar-mac.sh
-```
-
-**📖 Guía completa para Mac:** Ver `GUIA_MAC.md`
-
----
-
-## 📁 Estructura del Proyecto
-
-```
-proyectoProduccion/
-├── database.properties          # ⚙️ Tu configuración (no en Git)
-├── database.properties.example  # 📄 Plantilla Windows
-├── database.properties.mac      # 📄 Plantilla Mac
-├── database.sql                 # 🗄️ Script de creación de BD
-├── datos_ejemplo.sql            # 📊 Datos de prueba
-├── pom.xml                      # 📦 Configuración Maven
-├── iniciar.ps1                  # 🚀 Script Windows
-├── iniciar-mac.sh              # 🚀 Script Mac
-├── GUIA_MAC.md                 # 📖 Guía completa para Mac
-│
-├── src/main/java/com/proyectoproduccion/
-│   ├── Main.java                # 🎯 Clase principal
-│   │
-│   ├── Controlador/             # 🎮 Controladores JavaFX
-│   │   ├── ClientesController.java
-│   │   ├── VehiculosController.java
-│   │   ├── OrdenesController.java
-│   │   ├── ReportesController.java
-│   │   ├── LayoutController.java
-│   │   └── LoginController.java
-│   │
-│   ├── Modelo/                  # 📦 Modelos de datos
-│   │   ├── Cliente.java
-│   │   ├── Vehiculo.java
-│   │   └── Orden.java
-│   │
-│   └── Util/                    # 🔧 Utilidades
-│       ├── ConfigDB.java        # Lectura de configuración
-│       ├── Conexion.java        # Conexión a MySQL
-│       ├── DatabaseUtil.java    # Operaciones CRUD
-│       ├── SceneManager.java    # Gestión de vistas
-│       ├── ProbarConexion.java  # Diagnóstico
-│       └── InsertarDatosPrueba.java
-│
-└── src/main/resources/com/proyectoproduccion/
-    ├── login.fxml               # 🖼️ Pantalla de login
-    ├── layout.fxml              # 🖼️ Layout principal
-    ├── clientes.fxml            # 🖼️ Vista de clientes
-    ├── vehiculos.fxml           # 🖼️ Vista de vehículos
-    ├── ordenesServicio.fxml     # 🖼️ Vista de órdenes
-    └── reportes.fxml            # 🖼️ Vista de reportes
-```
-
----
-
-## 🔧 Configuración Avanzada
-
-### Diferentes Ambientes
-
-#### Desarrollo Local (XAMPP)
 ```properties
 db.host=localhost
 db.port=3306
+db.name=taller_db
 db.user=root
 db.password=
 ```
 
-#### Servidor de Pruebas
-```properties
-db.host=192.168.1.100
-db.port=3306
-db.user=taller_test
-db.password=test123
+### 4. Ejecutar
+
+Mac:
+```bash
+chmod +x iniciar-mac.sh
+./iniciar-mac.sh
 ```
 
-#### Producción
-```properties
-db.host=servidor.empresa.com
-db.port=3306
-db.user=taller_prod
-db.password=P@ssw0rd_S3gur0
+Windows:
+```cmd
+mvnw.cmd javafx:run
 ```
 
----
+Al iniciar, seleccionar la base de datos a usar: MySQL o SQLite.
 
-## 📊 Base de Datos
+## Estructura del Proyecto
 
-### Tablas Principales
-
-#### `clientes`
-- id (PK, AUTO_INCREMENT)
-- nombre (VARCHAR)
-- telefono (VARCHAR)
-- email (VARCHAR)
-- direccion (VARCHAR)
-
-#### `vehiculos`
-- id (PK, AUTO_INCREMENT)
-- placa (UNIQUE)
-- marca (VARCHAR)
-- modelo (VARCHAR)
-- anio (INT)
-- cliente_id (FK → clientes)
-
-#### `ordenes`
-- id (PK, AUTO_INCREMENT)
-- cliente_id (FK → clientes)
-- vehiculo_id (FK → vehiculos)
-- estado (ENUM: RECIBIDO, EN_PROCESO, ENTREGADO)
-- costo_repuestos (DECIMAL)
-- horas_trabajo (DECIMAL)
-- costo_hora (DECIMAL)
-- mano_obra (DECIMAL)
-- subtotal (DECIMAL)
-- iva (DECIMAL)
-- total (DECIMAL)
-
-### Insertar Datos de Prueba
-
-**PowerShell:**
-```powershell
-.\insertar-datos.ps1
+```
+proyectoProduccion/
+├── database.properties      # Configuración de conexión
+├── database.sql             # Script MySQL
+├── database-sqlite.sql      # Script SQLite
+├── taller_db.sqlite         # Base de datos SQLite
+├── pom.xml                  # Configuración Maven
+├── iniciar-mac.sh           # Script de inicio Mac
+│
+├── src/main/java/com/proyectoproduccion/
+│   ├── Main.java
+│   ├── Controlador/
+│   │   ├── ClientesController.java
+│   │   ├── VehiculosController.java
+│   │   ├── OrdenesController.java
+│   │   ├── ReportesController.java
+│   │   └── LayoutController.java
+│   ├── Modelo/
+│   │   ├── Cliente.java
+│   │   ├── Vehiculo.java
+│   │   └── Orden.java
+│   └── Util/
+│       ├── ConfigDB.java
+│       ├── Conexion.java
+│       ├── DatabaseUtil.java
+│       └── SceneManager.java
+│
+└── src/main/resources/com/proyectoproduccion/
+    ├── layout.fxml
+    ├── clientes.fxml
+    ├── vehiculos.fxml
+    ├── ordenesServicio.fxml
+    └── reportes.fxml
 ```
 
-**O con Maven:**
-```powershell
-.\mvnw.cmd exec:java -Dexec.mainClass="com.proyectoproduccion.Util.InsertarDatosPrueba"
-```
+## Base de Datos
 
-**O con SQL:**
-```sql
-source datos_ejemplo.sql;
-```
+### Tablas
 
----
+**clientes**
+- id, nombre, telefono, email, direccion
 
-## 🛠️ Scripts Útiles
+**vehiculos**
+- id, placa, marca, modelo, anio, cliente_id
 
-### Windows (PowerShell)
+**ordenes**
+- id, cliente_id, vehiculo_id, estado
+- costo_repuestos, horas_trabajo, costo_hora
+- mano_obra, subtotal, iva, total
 
-| Script | Descripción |
-|--------|-------------|
-| `.\iniciar.ps1` | Inicia la aplicación con verificaciones |
-| `.\insertar-datos.ps1` | Inserta datos de prueba |
-| `.\iniciar-mysql.ps1` | Inicia MySQL de XAMPP |
-| `.\detectar-mysql-config.ps1` | Detecta configuración de Workbench |
+## Uso
 
-### Comandos Maven
+### Crear Cliente
+1. Ir a la sección Clientes
+2. Clic en "Nuevo Cliente"
+3. Llenar datos y guardar
 
-```powershell
+### Crear Vehículo
+1. Ir a la sección Vehículos
+2. Clic en "Nuevo Vehículo"
+3. Seleccionar cliente, llenar datos y guardar
+
+### Crear Orden de Servicio
+1. Ir a la sección Órdenes
+2. Seleccionar cliente y vehículo (o crearlos con el botón +)
+3. Seleccionar estado
+4. Clic en "Agregar Orden"
+
+### Calcular Costos
+1. Seleccionar una orden de la tabla
+2. Ingresar: Repuestos, Horas de Trabajo, Costo por Hora
+3. Clic en "Calcular"
+4. Los costos se guardan automáticamente
+
+### Generar Comprobante
+1. Seleccionar una orden con costos calculados
+2. Clic en "Generar Comprobante"
+
+### Ver Resumen Total
+1. Clic en "Ver Resumen Total"
+2. Muestra estadísticas generales e ingresos del taller
+
+## Comandos Maven
+
+```bash
 # Compilar
-.\mvnw.cmd compile
+./mvnw compile
+
+# Ejecutar
+./mvnw javafx:run
 
 # Limpiar y compilar
-.\mvnw.cmd clean compile
-
-# Ejecutar aplicación
-.\mvnw.cmd javafx:run
-
-# Ejecutar diagnóstico
-.\mvnw.cmd exec:java -Dexec.mainClass="com.proyectoproduccion.Util.ProbarConexion"
-
-# Insertar datos de prueba
-.\mvnw.cmd exec:java -Dexec.mainClass="com.proyectoproduccion.Util.InsertarDatosPrueba"
+./mvnw clean compile
 ```
 
----
+## Solución de Problemas
 
-## 🐛 Solución de Problemas
+### No conecta a MySQL
+- Verificar que MySQL esté ejecutándose
+- Revisar credenciales en database.properties
+- Verificar que la base de datos taller_db exista
 
-### Error: "No se pudo conectar a la base de datos"
+### No conecta a SQLite
+- Verificar que el archivo taller_db.sqlite exista en la raíz del proyecto
 
-**Causa**: MySQL no está corriendo
+## Tecnologías
 
-**Solución**:
-1. Abre Panel de Control de XAMPP
-2. Click "Start" en MySQL
-3. Vuelve a ejecutar la aplicación
-
-### Error: "Access Denied"
-
-**Causa**: Credenciales incorrectas en `database.properties`
-
-**Solución**:
-1. Edita `database.properties`
-2. Usa las mismas credenciales de MySQL Workbench
-3. Guarda y vuelve a ejecutar
-
-### Error: "Unknown database 'taller_db'"
-
-**Causa**: La base de datos no existe
-
-**Solución**:
-```sql
--- En MySQL Workbench:
-source database.sql;
-```
-
-### Error: "JAVA_HOME not found"
-
-**Causa**: Variable de entorno no configurada
-
-**Solución**:
-```powershell
-$env:JAVA_HOME = "C:\Program Files\Java\jdk-21"
-```
-
-O ejecuta: `.\iniciar.ps1` (lo configura automáticamente)
-
----
-
-## 📚 Documentación Adicional
-
-- [CONFIGURACION_AUTOMATICA.md](CONFIGURACION_AUTOMATICA.md) - Guía completa del sistema de configuración
-- [INSERTAR_DATOS.md](INSERTAR_DATOS.md) - Cómo insertar datos en las tablas
-- [CONEXION_IP_LOCAL.md](CONEXION_IP_LOCAL.md) - Conexión con IP local
-- [SOLUCIONAR_MYSQL.md](SOLUCIONAR_MYSQL.md) - Solución de problemas MySQL
-
----
-
-## 🔒 Seguridad
-
-### Proteger Credenciales
-
-El archivo `database.properties` está en `.gitignore` para no subir credenciales a Git.
-
-**Para compartir el proyecto:**
-1. Comparte `database.properties.example`
-2. NO compartas `database.properties`
-3. Cada desarrollador crea su propio `database.properties`
-
----
-
-## 🎯 Características del Sistema
-
-### Módulo de Clientes
-- ✅ Agregar, editar, eliminar clientes
-- ✅ Búsqueda en tiempo real
-- ✅ Validación de datos
-- ✅ Integridad referencial
-
-### Módulo de Vehículos
-- ✅ Registro de vehículos por cliente
-- ✅ Placa única
-- ✅ Historial de vehículos
-- ✅ Filtrado por cliente
-
-### Módulo de Órdenes
-- ✅ Estados: RECIBIDO, EN_PROCESO, ENTREGADO
-- ✅ Cálculo automático de costos
-- ✅ IVA del 19% automático
-- ✅ Mano de obra = horas × costo/hora
-- ✅ Total = subtotal + IVA
-
-### Módulo de Reportes
-- ✅ Estadísticas de órdenes
-- ✅ Análisis por estado
-- ✅ Totales de ventas
-- ✅ Reportes visuales
-
----
-
-## 🚀 Próximas Funcionalidades
-
-- [ ] Reportes en PDF
-- [ ] Gráficos estadísticos
-- [ ] Sistema de usuarios
-- [ ] Respaldo automático de BD
-- [ ] Exportar a Excel
-- [ ] Envío de correos a clientes
-
----
-
-## 👨‍💻 Desarrollo
-
-### Tecnologías Utilizadas
-
-- **Java 21** - Lenguaje de programación
-- **JavaFX 21** - Framework de interfaz gráfica
-- **MySQL 8.0** - Base de datos
-- **Maven** - Gestión de dependencias
-- **JDBC** - Conexión a base de datos
-
-### Dependencias (pom.xml)
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-controls</artifactId>
-        <version>21.0.6</version>
-    </dependency>
-    <dependency>
-        <groupId>org.openjfx</groupId>
-        <artifactId>javafx-fxml</artifactId>
-        <version>21.0.6</version>
-    </dependency>
-    <dependency>
-        <groupId>com.mysql</groupId>
-        <artifactId>mysql-connector-j</artifactId>
-        <version>8.3.0</version>
-    </dependency>
-</dependencies>
-```
-
----
-
-## 📝 Licencia
-
-Este proyecto es parte de un trabajo académico.
-
----
-
-## 📞 Soporte
-
-Si tienes problemas:
-1. Revisa la documentación en la carpeta del proyecto
-2. Ejecuta el diagnóstico: `.\mvnw.cmd exec:java -Dexec.mainClass="com.proyectoproduccion.Util.ProbarConexion"`
-3. Verifica que MySQL esté corriendo
-4. Revisa `database.properties`
-
----
-
-## ✅ Checklist de Inicio
-
-- [ ] Java 21 instalado
-- [ ] MySQL instalado (XAMPP)
-- [ ] MySQL corriendo
-- [ ] Base de datos `taller_db` creada
-- [ ] Archivo `database.properties` configurado
-- [ ] Aplicación compilada sin errores
-- [ ] Conexión exitosa a la base de datos
-
----
-
-**¡Listo para usar! 🎉**
-
-```powershell
-.\iniciar.ps1
-```
+- Java 21
+- JavaFX 21
+- MySQL 8.0 / SQLite
+- Maven
+- JDBC

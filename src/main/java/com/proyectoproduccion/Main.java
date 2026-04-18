@@ -7,59 +7,81 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+
+import java.util.Optional;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
 
-        // Mostrar la configuración que se está usando
-        System.out.println("\n===========================================");
-        System.out.println("  INICIANDO SISTEMA DE TALLER");
-        System.out.println("===========================================\n");
-        ConfigDB.mostrarConfiguracion();
-        System.out.println();
+        // Mostrar diálogo para elegir base de datos
+        ButtonType btnMySQL = new ButtonType("MySQL", ButtonBar.ButtonData.LEFT);
+        ButtonType btnSQLite = new ButtonType("SQLite", ButtonBar.ButtonData.RIGHT);
 
-        // Probar la conexión con la configuración del archivo
-        System.out.println("Probando conexión a la base de datos...");
-        
+        Alert seleccion = new Alert(Alert.AlertType.CONFIRMATION);
+        seleccion.setTitle("Sistema de Taller");
+        seleccion.setHeaderText("Seleccionar Base de Datos");
+        seleccion.setContentText("MySQL: Requiere servidor MySQL activo\nSQLite: Base de datos local (sin servidor)");
+        seleccion.getButtonTypes().setAll(btnMySQL, btnSQLite);
+
+        Optional<ButtonType> resultado = seleccion.showAndWait();
+
+        if (resultado.isEmpty()) {
+            System.exit(0);
+            return;
+        }
+
+        if (resultado.get() == btnSQLite) {
+            ConfigDB.setDbType("sqlite");
+        } else {
+            ConfigDB.setDbType("mysql");
+        }
+
+        System.out.println("Base de datos seleccionada: " + ConfigDB.getDbType().toUpperCase());
+        ConfigDB.mostrarConfiguracion();
+
+        // Probar conexión
         if (Conexion.probarConexion()) {
-            // Conexión exitosa - ir directo al layout principal
-            System.out.println("✓ Conexión exitosa!\n");
-            
+            System.out.println("Conexion exitosa");
+
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/proyectoproduccion/layout.fxml")
             );
             Parent root = loader.load();
             Scene scene = new Scene(root);
-            stage.setTitle("Sistema de Taller - " + ConfigDB.getDatabase());
+            stage.setTitle("Sistema de Taller - " + ConfigDB.getDbType().toUpperCase());
             stage.setScene(scene);
             stage.setMaximized(true);
             stage.show();
-            
+
         } else {
-            // Error de conexión - mostrar mensaje y login manual
-            System.err.println("✗ No se pudo conectar con la configuración de database.properties\n");
-            
+            System.err.println("Error de conexion");
+
             Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error de Conexión");
-            alert.setHeaderText("No se pudo conectar a MySQL");
-            alert.setContentText(
-                "La aplicación no pudo conectarse a la base de datos.\n\n" +
-                "Configuración actual:\n" +
-                "• Host: " + ConfigDB.getHost() + "\n" +
-                "• Puerto: " + ConfigDB.getPort() + "\n" +
-                "• Usuario: " + ConfigDB.getUser() + "\n\n" +
-                "Verifica que:\n" +
-                "1. MySQL esté ejecutándose\n" +
-                "2. Las credenciales en database.properties sean correctas\n" +
-                "3. La base de datos '" + ConfigDB.getDatabase() + "' exista\n\n" +
-                "Edita el archivo database.properties en la raíz del proyecto."
-            );
+            alert.setTitle("Error de Conexion");
+            alert.setHeaderText("No se pudo conectar a " + ConfigDB.getDbType().toUpperCase());
+
+            if ("mysql".equals(ConfigDB.getDbType())) {
+                alert.setContentText(
+                    "Verifica que:\n" +
+                    "1. MySQL este ejecutandose\n" +
+                    "2. Los datos en database.properties sean correctos\n" +
+                    "3. La base de datos 'taller_db' exista\n\n" +
+                    "Host: " + ConfigDB.getHost() + "\n" +
+                    "Usuario: " + ConfigDB.getUser()
+                );
+            } else {
+                alert.setContentText(
+                    "No se pudo acceder al archivo SQLite.\n" +
+                    "Verifica que el archivo taller_db.sqlite exista."
+                );
+            }
             alert.showAndWait();
-            
-            // Cargar pantalla de login manual como fallback
+
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/com/proyectoproduccion/login.fxml")
             );
@@ -75,4 +97,3 @@ public class Main extends Application {
         launch();
     }
 }
-
