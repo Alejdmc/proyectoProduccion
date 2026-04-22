@@ -15,6 +15,8 @@ public class Conexion {
                 Class.forName("org.sqlite.JDBC");
                 return DriverManager.getConnection(url);
             } else {
+                // Cargar driver MySQL explícitamente
+                Class.forName("com.mysql.cj.jdbc.Driver");
                 String user = ConfigDB.getUser();
                 String password = ConfigDB.getPassword();
                 return DriverManager.getConnection(url, user, password);

@@ -42,6 +42,12 @@ public class DatabaseUtil {
             ps.setString(3, c.getEmail());
             ps.setString(4, c.getDireccion());
             ps.executeUpdate();
+            
+            // Asegurar commit (importante para SQLite)
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
+            
             ResultSet keys = ps.getGeneratedKeys();
             if (keys.next()) {
                 c.setId(keys.getInt(1));
@@ -62,6 +68,11 @@ public class DatabaseUtil {
             ps.setString(4, c.getDireccion());
             ps.setInt(5, c.getId());
             ps.executeUpdate();
+            
+            // Asegurar commit
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -73,6 +84,11 @@ public class DatabaseUtil {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
+            
+            // Asegurar commit
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -130,6 +146,12 @@ public class DatabaseUtil {
             ps.setInt(4, v.getAnio());
             ps.setInt(5, v.getClienteId());
             ps.executeUpdate();
+            
+            // Asegurar commit
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
+            
             ResultSet keys = ps.getGeneratedKeys();
             if (keys.next()) {
                 v.setId(keys.getInt(1));
@@ -151,6 +173,11 @@ public class DatabaseUtil {
             ps.setInt(5, v.getClienteId());
             ps.setInt(6, v.getId());
             ps.executeUpdate();
+            
+            // Asegurar commit
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -162,6 +189,11 @@ public class DatabaseUtil {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
+            
+            // Asegurar commit
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -230,6 +262,12 @@ public class DatabaseUtil {
             ps.setDouble(9, o.getIva());
             ps.setDouble(10, o.getTotal());
             ps.executeUpdate();
+            
+            // Asegurar commit
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
+            
             ResultSet keys = ps.getGeneratedKeys();
             if (keys.next()) {
                 o.setId(keys.getInt(1));
@@ -257,6 +295,11 @@ public class DatabaseUtil {
             ps.setDouble(10, o.getTotal());
             ps.setInt(11, o.getId());
             ps.executeUpdate();
+            
+            // Asegurar commit
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -268,6 +311,11 @@ public class DatabaseUtil {
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, id);
             ps.executeUpdate();
+            
+            // Asegurar commit
+            if (!conn.getAutoCommit()) {
+                conn.commit();
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
