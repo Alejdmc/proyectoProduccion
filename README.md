@@ -174,3 +174,22 @@ proyectoProduccion/
 - MySQL 8.0 / SQLite
 - Maven
 - JDBC
+- **NHTSA Vehicle API** (para búsqueda de vehículos por VIN)
+- Gson (para parseo JSON)
+
+## 🚗 Nueva Funcionalidad: Búsqueda por VIN
+
+El sistema ahora integra la API de NHTSA para buscar información de vehículos:
+
+- **Búsqueda por VIN**: Ingresa el VIN de 17 caracteres y obtén automáticamente marca, modelo y año
+- **Base de datos oficial**: Información directa del Departamento de Transporte de EE.UU.
+- **Ahorro de tiempo**: No más escritura manual de datos
+
+Ver documentación completa en: [INTEGRACION_NHTSA.md](INTEGRACION_NHTSA.md)
+
+### Cómo usar:
+1. Ir a Vehículos → Nuevo Vehículo
+2. Ingresar el VIN del vehículo
+3. Clic en "🔍 Buscar por VIN"
+4. Los campos se llenan automáticamente ✓
+

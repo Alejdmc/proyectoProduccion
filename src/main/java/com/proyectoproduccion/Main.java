@@ -18,7 +18,7 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
 
-        // Mostrar diálogo para elegir base de datos
+        // Elegir base de datos
         ButtonType btnMySQL = new ButtonType("MySQL", ButtonBar.ButtonData.LEFT);
         ButtonType btnSQLite = new ButtonType("SQLite", ButtonBar.ButtonData.RIGHT);
 

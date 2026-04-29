@@ -258,4 +258,12 @@ public class VehiculosController {
         alerta.setContentText(mensaje);
         alerta.showAndWait();
     }
+
+    private void mostrarInfo(String titulo, String mensaje) {
+        Alert alerta = new Alert(Alert.AlertType.INFORMATION);
+        alerta.setTitle("Información");
+        alerta.setHeaderText(titulo);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
+    }
 }
