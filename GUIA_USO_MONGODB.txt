@@ -1,0 +1,277 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║           ✅ CONEXIÓN MONGODB INTEGRADA EXITOSAMENTE                          ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+📦 ARCHIVOS CREADOS/MODIFICADOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ NUEVOS ARCHIVOS:
+   📄 ConexionMongo.java ................... Clase de conexión MongoDB
+   📄 database.properties.mongodb.example .. Configuración de ejemplo
+   ⚙️ cambiar-mongodb.ps1 .................. Script para cambiar a MongoDB
+   ⚙️ cambiar-mysql.ps1 .................... Script para cambiar a MySQL
+
+✅ ARCHIVOS MODIFICADOS:
+   📄 pom.xml .............................. Agregada dependencia MongoDB 4.11.1
+   📄 ConfigDB.java ........................ Soporte para MongoDB
+   📄 Conexion.java ........................ Soporte para MongoDB
+   📄 Main.java ............................ Agregada opción MongoDB
+   📄 database.properties .................. Configuración MongoDB
+   📄 README.md ............................ Documentación actualizada
+
+
+🚀 CÓMO USAR MONGODB
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPCIÓN 1: Usar el Script Automático (RECOMENDADO)
+-------------------------------------------------
+
+   1. Ejecutar script de cambio:
+
+      .\cambiar-mongodb.ps1
+
+   2. Ejecutar la aplicación:
+
+      .\mvnw.cmd javafx:run
+
+   3. Seleccionar "MongoDB" cuando aparezca el diálogo
+
+   4. ¡Listo! La aplicación se conectará a MongoDB
+
+
+OPCIÓN 2: Configuración Manual
+------------------------------
+
+   1. Editar database.properties:
+
+      db.type=mongodb
+      db.host=localhost
+      db.port=27017
+      db.name=taller_db
+      db.user=
+      db.password=
+
+   2. Ejecutar la aplicación:
+
+      .\mvnw.cmd javafx:run
+
+   3. Seleccionar "MongoDB"
+
+
+📊 IMPORTAR DATOS DE EJEMPLO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   1. Asegúrate de tener MongoDB ejecutándose
+
+   2. Importar los datos:
+
+      cd mongodb
+      .\importar-mongodb.ps1
+
+   3. Verificar la importación:
+
+      .\verificar-mongodb.ps1
+
+   Los datos incluyen:
+   • 12 clientes colombianos
+   • 15 vehículos con VINs válidos
+   • 15 órdenes de servicio
+   • Total: $10,964,150 COP
+
+
+⚙️ CARACTERÍSTICAS DE LA INTEGRACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Selector de base de datos al iniciar
+   → MySQL, SQLite o MongoDB
+
+✅ Configuración automática
+   → Detecta tipo de BD y se configura solo
+
+✅ Conexión singleton
+   → Una sola conexión MongoDB reutilizable
+
+✅ Soporte para autenticación
+   → Usuario y contraseña opcionales
+
+✅ Manejo de errores robusto
+   → Mensajes claros si falla la conexión
+
+✅ Scripts de cambio rápido
+   → Cambia entre bases de datos en segundos
+
+
+🔧 CONFIGURACIÓN MONGODB
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+SIN AUTENTICACIÓN (por defecto):
+--------------------------------
+db.type=mongodb
+db.host=localhost
+db.port=27017
+db.name=taller_db
+db.user=
+db.password=
+
+
+CON AUTENTICACIÓN:
+-----------------
+db.type=mongodb
+db.host=localhost
+db.port=27017
+db.name=taller_db
+db.user=tu_usuario
+db.password=tu_contraseña
+
+
+SERVIDOR REMOTO:
+---------------
+db.type=mongodb
+db.host=192.168.1.100
+db.port=27017
+db.name=taller_db
+db.user=admin
+db.password=password123
+
+
+🎯 CAMBIAR ENTRE BASES DE DATOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+CAMBIAR A MONGODB:
+   .\cambiar-mongodb.ps1
+
+CAMBIAR A MYSQL:
+   .\cambiar-mysql.ps1
+
+CAMBIAR A SQLITE:
+   Editar database.properties manualmente:
+   db.type=sqlite
+   db.file=taller_db.sqlite
+
+
+💡 NOTAS IMPORTANTES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. MongoDB debe estar ejecutándose antes de iniciar la aplicación
+
+   Verificar con:
+   mongosh --version
+
+2. Por defecto MongoDB NO requiere autenticación en localhost
+
+   Si tu instalación requiere usuario/contraseña, configúralo en
+   database.properties
+
+3. La aplicación detecta automáticamente el tipo de base de datos
+
+   Puedes cambiar db.type en database.properties sin modificar código
+
+4. Los scripts de cambio crean backup automático
+
+   Se guarda en database.properties.backup
+
+
+🔍 VERIFICAR CONEXIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+VERIFICAR SI MONGODB ESTÁ CORRIENDO:
+
+   mongosh mongodb://localhost:27017
+
+   Si conecta exitosamente, MongoDB está activo ✓
+
+
+PROBAR CONEXIÓN DESDE LA APLICACIÓN:
+
+   La aplicación prueba automáticamente la conexión al iniciar
+   y muestra un mensaje de error si falla
+
+
+📚 ARCHIVOS DE DOCUMENTACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 README.md ........................ Documentación general del proyecto
+📖 mongodb/README.md ................ Documentación específica MongoDB
+📖 mongodb/INDICE_COMPLETO.md ....... Índice detallado de archivos JSON
+📖 INTEGRACION_MONGODB.txt .......... Resumen de integración de datos
+📖 GUIA_USO_MONGODB.txt ............. Este archivo
+
+
+🛠️ SOLUCIÓN DE PROBLEMAS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+PROBLEMA: "No se pudo conectar a MongoDB"
+SOLUCIÓN:
+   1. Verificar que MongoDB esté ejecutándose
+   2. Verificar host y puerto en database.properties
+   3. Si usa autenticación, verificar usuario/contraseña
+
+PROBLEMA: "Base de datos taller_db no existe"
+SOLUCIÓN:
+   Importar los datos con: cd mongodb; .\importar-mongodb.ps1
+   O crear la base manualmente en MongoDB
+
+PROBLEMA: "Error de autenticación"
+SOLUCIÓN:
+   1. Si NO usas autenticación, dejar user y password vacíos
+   2. Si usas autenticación, verificar credenciales correctas
+   3. Verificar que el usuario tenga permisos en la BD
+
+PROBLEMA: "Driver MongoDB no encontrado"
+SOLUCIÓN:
+   Ejecutar: .\mvnw.cmd clean compile
+   Maven descargará automáticamente las dependencias
+
+
+✅ CHECKLIST DE INTEGRACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+- [x] Dependencia MongoDB agregada al pom.xml
+- [x] Clase ConexionMongo creada
+- [x] ConfigDB actualizado con soporte MongoDB
+- [x] Main.java con opción MongoDB en selector
+- [x] Scripts de cambio de BD creados
+- [x] Archivo de configuración de ejemplo creado
+- [x] README actualizado con instrucciones
+- [x] Compilación exitosa sin errores
+
+
+🎉 PRÓXIMOS PASOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. ✅ Instalar MongoDB (si no lo tienes)
+   https://www.mongodb.com/try/download/community
+
+2. ✅ Iniciar MongoDB
+   mongod --dbpath C:\data\db
+
+3. ✅ Importar datos de ejemplo
+   cd mongodb
+   .\importar-mongodb.ps1
+
+4. ✅ Cambiar configuración a MongoDB
+   .\cambiar-mongodb.ps1
+
+5. ✅ Ejecutar la aplicación
+   .\mvnw.cmd javafx:run
+
+6. ✅ Seleccionar "MongoDB" en el diálogo
+
+7. ✅ ¡Disfrutar de tu aplicación con MongoDB! 🚀
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+          🎯 INTEGRACIÓN MONGODB COMPLETADA CON ÉXITO
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Ahora tu aplicación soporta 3 bases de datos:
+   • MySQL (SQL tradicional)
+   • SQLite (SQL sin servidor)
+   • MongoDB (NoSQL)
+
+Puedes cambiar entre ellas en cualquier momento sin modificar código.
+

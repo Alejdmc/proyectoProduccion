@@ -27,11 +27,19 @@ public class Conexion {
     }
 
     public static boolean probarConexion() {
-        try (Connection conn = getConnection()) {
-            return conn != null && !conn.isClosed();
-        } catch (SQLException e) {
-            System.err.println("Error al conectar: " + e.getMessage());
-            return false;
+        String dbType = ConfigDB.getDbType();
+        
+        if ("mongodb".equals(dbType)) {
+            // Para MongoDB, usar la clase especializada
+            return ConexionMongo.probarConexion();
+        } else {
+            // Para MySQL y SQLite
+            try (Connection conn = getConnection()) {
+                return conn != null && !conn.isClosed();
+            } catch (SQLException e) {
+                System.err.println("Error al conectar: " + e.getMessage());
+                return false;
+            }
         }
     }
 

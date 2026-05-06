@@ -20,13 +20,18 @@ public class Main extends Application {
 
         // Elegir base de datos
         ButtonType btnMySQL = new ButtonType("MySQL", ButtonBar.ButtonData.LEFT);
-        ButtonType btnSQLite = new ButtonType("SQLite", ButtonBar.ButtonData.RIGHT);
+        ButtonType btnSQLite = new ButtonType("SQLite", ButtonBar.ButtonData.OTHER);
+        ButtonType btnMongoDB = new ButtonType("MongoDB", ButtonBar.ButtonData.RIGHT);
 
         Alert seleccion = new Alert(Alert.AlertType.CONFIRMATION);
         seleccion.setTitle("Sistema de Taller");
         seleccion.setHeaderText("Seleccionar Base de Datos");
-        seleccion.setContentText("MySQL: Requiere servidor MySQL activo\nSQLite: Base de datos local (sin servidor)");
-        seleccion.getButtonTypes().setAll(btnMySQL, btnSQLite);
+        seleccion.setContentText(
+            "MySQL: Requiere servidor MySQL activo\n" +
+            "SQLite: Base de datos local (sin servidor)\n" +
+            "MongoDB: Requiere servidor MongoDB activo"
+        );
+        seleccion.getButtonTypes().setAll(btnMySQL, btnSQLite, btnMongoDB);
 
         Optional<ButtonType> resultado = seleccion.showAndWait();
 
@@ -37,6 +42,8 @@ public class Main extends Application {
 
         if (resultado.get() == btnSQLite) {
             ConfigDB.setDbType("sqlite");
+        } else if (resultado.get() == btnMongoDB) {
+            ConfigDB.setDbType("mongodb");
         } else {
             ConfigDB.setDbType("mysql");
         }
@@ -73,6 +80,14 @@ public class Main extends Application {
                     "3. La base de datos 'taller_db' exista\n\n" +
                     "Host: " + ConfigDB.getHost() + "\n" +
                     "Usuario: " + ConfigDB.getUser()
+                );
+            } else if ("mongodb".equals(ConfigDB.getDbType())) {
+                alert.setContentText(
+                    "Verifica que:\n" +
+                    "1. MongoDB este ejecutandose\n" +
+                    "2. Los datos en database.properties sean correctos\n" +
+                    "3. La base de datos 'taller_db' exista\n\n" +
+                    "Host: " + ConfigDB.getHost() + ":" + ConfigDB.getPort()
                 );
             } else {
                 alert.setContentText(

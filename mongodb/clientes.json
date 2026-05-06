@@ -1,0 +1,87 @@
+[
+  {
+    "_id": 1,
+    "nombre": "Carlos Andrés Rodríguez",
+    "telefono": "+57 300 123 4567",
+    "email": "carlos.rodriguez@email.com",
+    "direccion": "Calle 45 #23-56, Bogotá"
+  },
+  {
+    "_id": 2,
+    "nombre": "María Fernanda López",
+    "telefono": "+57 301 987 6543",
+    "email": "maria.lopez@email.com",
+    "direccion": "Carrera 15 #78-90, Medellín"
+  },
+  {
+    "_id": 3,
+    "nombre": "Juan Pablo Martínez",
+    "telefono": "+57 312 456 7890",
+    "email": "juan.martinez@email.com",
+    "direccion": "Avenida 9 #12-34, Cali"
+  },
+  {
+    "_id": 4,
+    "nombre": "Ana María García",
+    "telefono": "+57 315 234 5678",
+    "email": "ana.garcia@email.com",
+    "direccion": "Calle 100 #18-45, Barranquilla"
+  },
+  {
+    "_id": 5,
+    "nombre": "Luis Fernando Torres",
+    "telefono": "+57 320 678 9012",
+    "email": "luis.torres@email.com",
+    "direccion": "Carrera 7 #32-11, Cartagena"
+  },
+  {
+    "_id": 6,
+    "nombre": "Sandra Patricia Gómez",
+    "telefono": "+57 318 345 6789",
+    "email": "sandra.gomez@email.com",
+    "direccion": "Transversal 50 #67-89, Bucaramanga"
+  },
+  {
+    "_id": 7,
+    "nombre": "Roberto Carlos Díaz",
+    "telefono": "+57 314 567 8901",
+    "email": "roberto.diaz@email.com",
+    "direccion": "Diagonal 25 #43-67, Pereira"
+  },
+  {
+    "_id": 8,
+    "nombre": "Claudia Milena Vargas",
+    "telefono": "+57 316 789 0123",
+    "email": "claudia.vargas@email.com",
+    "direccion": "Calle 72 #56-78, Manizales"
+  },
+  {
+    "_id": 9,
+    "nombre": "Pedro José Ramírez",
+    "telefono": "+57 319 890 1234",
+    "email": "pedro.ramirez@email.com",
+    "direccion": "Carrera 30 #45-12, Ibagué"
+  },
+  {
+    "_id": 10,
+    "nombre": "Gloria Stella Moreno",
+    "telefono": "+57 311 234 5670",
+    "email": "gloria.moreno@email.com",
+    "direccion": "Avenida 19 #88-90, Santa Marta"
+  },
+  {
+    "_id": 11,
+    "nombre": "Empresa TransCargo SAS",
+    "telefono": "+57 601 234 5678",
+    "email": "contacto@transcargo.com",
+    "direccion": "Zona Industrial Calle 13 #45-67, Bogotá"
+  },
+  {
+    "_id": 12,
+    "nombre": "Diego Armando Suárez",
+    "telefono": "+57 317 456 7891",
+    "email": "diego.suarez@email.com",
+    "direccion": "Calle 85 #12-34, Armenia"
+  }
+]
+

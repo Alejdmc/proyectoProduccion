@@ -17,6 +17,7 @@ public class ConfigDB {
     // Valores por defecto si no se encuentra el archivo
     private static final String DEFAULT_HOST = "localhost";
     private static final String DEFAULT_PORT = "3306";
+    private static final String DEFAULT_MONGO_PORT = "27017";
     private static final String DEFAULT_DATABASE = "taller_db";
     private static final String DEFAULT_USER = "root";
     private static final String DEFAULT_PASSWORD = "";
@@ -131,10 +132,33 @@ public class ConfigDB {
             // Para SQLite, usar un archivo local
             String dbFile = properties.getProperty("db.file", "taller_db.sqlite");
             return "jdbc:sqlite:" + dbFile;
+        } else if ("mongodb".equals(dbType)) {
+            // Para MongoDB, retornar la URI de conexión
+            return getMongoURI();
         } else {
             // Para MySQL (por defecto)
             return "jdbc:mysql://" + getHost() + ":" + getPort() + "/" + 
                    getDatabase() + "?useSSL=false&serverTimezone=UTC";
+        }
+    }
+    
+    /**
+     * Obtiene la URI de conexión para MongoDB
+     */
+    public static String getMongoURI() {
+        cargarConfiguracion();
+        String host = getHost();
+        String port = getPort();
+        String user = getUser();
+        String password = getPassword();
+        String database = getDatabase();
+        
+        // Si hay usuario y contraseña, incluirlos en la URI
+        if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
+            return String.format("mongodb://%s:%s@%s:%s/%s?authSource=admin", 
+                user, password, host, port, database);
+        } else {
+            return String.format("mongodb://%s:%s", host, port);
         }
     }
 
@@ -145,6 +169,13 @@ public class ConfigDB {
 
         if ("sqlite".equals(getDbType())) {
             System.out.println("Archivo: " + properties.getProperty("db.file", "taller_db.sqlite"));
+        } else if ("mongodb".equals(getDbType())) {
+            System.out.println("Host: " + getHost());
+            System.out.println("Puerto: " + getPort());
+            System.out.println("Database: " + getDatabase());
+            if (getUser() != null && !getUser().isEmpty()) {
+                System.out.println("Usuario: " + getUser());
+            }
         } else {
             System.out.println("Host: " + getHost());
             System.out.println("Puerto: " + getPort());

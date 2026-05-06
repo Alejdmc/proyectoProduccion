@@ -47,18 +47,18 @@ db.password=
 
 ### 4. Ejecutar
 
-Mac:
+**Mac:**
 ```bash
 chmod +x iniciar-mac.sh
 ./iniciar-mac.sh
 ```
 
-Windows:
+**Windows:**
 ```cmd
 mvnw.cmd javafx:run
 ```
 
-Al iniciar, seleccionar la base de datos a usar: MySQL o SQLite.
+Al iniciar, seleccionar la base de datos a usar: **MySQL**, **SQLite** o **MongoDB**.
 
 ## Estructura del Proyecto
 
@@ -192,4 +192,61 @@ Ver documentación completa en: [INTEGRACION_NHTSA.md](INTEGRACION_NHTSA.md)
 2. Ingresar el VIN del vehículo
 3. Clic en "🔍 Buscar por VIN"
 4. Los campos se llenan automáticamente ✓
+
+## 🍃 Integración con MongoDB
+
+El proyecto incluye archivos JSON listos para importar datos en MongoDB:
+
+### Contenido del Directorio `mongodb/`
+
+- **`clientes.json`** - 12 clientes de ejemplo
+- **`vehiculos.json`** - 15 vehículos con VINs y datos completos
+- **`ordenes.json`** - 15 órdenes de servicio con estados y costos
+- **`importar-mongodb.ps1`** - Script automático de importación (Windows)
+- **`importar-mongodb.sh`** - Script automático de importación (Linux/Mac)
+- **`verificar-mongodb.ps1`** - Script de verificación de datos
+- **`consultas-utiles.js`** - +100 consultas MongoDB listas para usar
+- **`README.md`** - Documentación completa de MongoDB
+
+### 🚀 Importación Rápida
+
+**Windows PowerShell:**
+```powershell
+cd mongodb
+.\importar-mongodb.ps1
+```
+
+**Linux/Mac:**
+```bash
+cd mongodb
+chmod +x importar-mongodb.sh
+./importar-mongodb.sh
+```
+
+### ✅ Verificar Importación
+
+```powershell
+cd mongodb
+.\verificar-mongodb.ps1
+```
+
+### 📊 Datos Incluidos
+
+- 12 clientes con información completa
+- 15 vehículos de diferentes marcas (Toyota, Chevrolet, Mazda, Honda, etc.)
+- 15 órdenes con estados: RECIBIDO, EN_PROCESO, ENTREGADO
+- Total facturación: ~$10,964,150 COP
+- VINs válidos para pruebas con API NHTSA
+
+### 📚 Documentación Completa
+
+Ver guía detallada en: **[mongodb/README.md](mongodb/README.md)**
+
+Incluye:
+- Instrucciones de instalación
+- Ejemplos de consultas
+- Estadísticas y reportes
+- Agregaciones y JOINs
+- Índices recomendados
+- Solución de problemas
 

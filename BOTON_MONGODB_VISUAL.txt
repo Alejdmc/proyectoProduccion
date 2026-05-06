@@ -1,0 +1,282 @@
+╔═══════════════════════════════════════════════════════════════════════════════╗
+║                                                                               ║
+║              ✅ BOTÓN MONGODB AGREGADO CORRECTAMENTE ✅                       ║
+║                                                                               ║
+╚═══════════════════════════════════════════════════════════════════════════════╝
+
+📱 DIÁLOGO DE SELECCIÓN DE BASE DE DATOS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Cuando inicies la aplicación, verás este diálogo:
+
+    ┌────────────────────────────────────────────────────────┐
+    │                   Sistema de Taller                    │
+    ├────────────────────────────────────────────────────────┤
+    │                                                        │
+    │          Seleccionar Base de Datos                     │
+    │                                                        │
+    │     MySQL: Requiere servidor MySQL activo              │
+    │     SQLite: Base de datos local (sin servidor)         │
+    │     MongoDB: Requiere servidor MongoDB activo          │
+    │                                                        │
+    ├────────────────────────────────────────────────────────┤
+    │                                                        │
+    │   [ MySQL ]     [ SQLite ]     [ MongoDB ]             │
+    │                                                        │
+    └────────────────────────────────────────────────────────┘
+
+         ↑              ↑              ↑
+      Opción 1      Opción 2       Opción 3 (NUEVO)
+
+
+🎯 CÓMO FUNCIONA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣ INICIAR LA APLICACIÓN
+
+   $env:JAVA_HOME = "C:\Program Files\Java\jdk-21"
+   .\mvnw.cmd javafx:run
+
+
+2️⃣ APARECE EL DIÁLOGO
+
+   El sistema muestra 3 botones:
+
+   🔵 MySQL   → Para usar base de datos MySQL
+   🟢 SQLite  → Para usar base de datos SQLite
+   🟠 MongoDB → Para usar base de datos MongoDB (NUEVO)
+
+
+3️⃣ SELECCIONAR BASE DE DATOS
+
+   Haz clic en el botón correspondiente:
+
+   → Si seleccionas MySQL:
+     • Lee configuración de database.properties
+     • Intenta conectarse a MySQL con esas credenciales
+     • Si falla, muestra pantalla de login
+
+   → Si seleccionas SQLite:
+     • Lee el archivo taller_db.sqlite
+     • Se conecta automáticamente
+     • No requiere credenciales
+
+   → Si seleccionas MongoDB:
+     • Lee configuración de database.properties
+     • Intenta conectarse a MongoDB
+     • Si falla, muestra mensaje de error
+
+
+4️⃣ LA APLICACIÓN SE ABRE
+
+   Si la conexión es exitosa, verás la interfaz principal
+   con el título "Sistema de Taller - MONGODB" (o el tipo que elegiste)
+
+
+🔧 CONFIGURACIÓN ACTUAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📄 database.properties (archivo de configuración):
+
+   db.type=mysql              ← Tipo por defecto
+   db.host=172.30.16.17       ← Host actual
+   db.user=damonroy86          ← Usuario actual
+   db.password=67001386        ← Contraseña actual
+
+
+💡 PARA USAR MONGODB
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+OPCIÓN A: Usar el script automático
+───────────────────────────────────
+
+   .\cambiar-mongodb.ps1
+
+   Esto cambia database.properties a:
+
+   db.type=mongodb
+   db.host=localhost
+   db.port=27017
+   db.name=taller_db
+   db.user=
+   db.password=
+
+
+OPCIÓN B: Editar manualmente
+────────────────────────────
+
+   Abre database.properties y cambia:
+
+   db.type=mongodb
+   db.host=localhost
+   db.port=27017
+
+
+⚙️ FUNCIONAMIENTO INTERNO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Main.java - Código del selector:
+
+   // Se crean 3 botones
+   ButtonType btnMySQL = new ButtonType("MySQL", ...);
+   ButtonType btnSQLite = new ButtonType("SQLite", ...);
+   ButtonType btnMongoDB = new ButtonType("MongoDB", ...);  ← NUEVO
+
+   // Se muestran en el diálogo
+   Alert seleccion = new Alert(...);
+   seleccion.getButtonTypes().setAll(btnMySQL, btnSQLite, btnMongoDB);
+
+   // Se detecta cuál se presionó
+   if (resultado.get() == btnSQLite) {
+       ConfigDB.setDbType("sqlite");
+   } else if (resultado.get() == btnMongoDB) {
+       ConfigDB.setDbType("mongodb");  ← NUEVO
+   } else {
+       ConfigDB.setDbType("mysql");
+   }
+
+
+🧪 PRUEBA VISUAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Para ver el diálogo con los 3 botones:
+
+   1. Ejecutar la aplicación:
+
+      $env:JAVA_HOME = "C:\Program Files\Java\jdk-21"
+      .\mvnw.cmd javafx:run
+
+   2. Observar el diálogo que aparece
+
+   3. Verás 3 botones claramente visibles:
+      [ MySQL ]  [ SQLite ]  [ MongoDB ]
+
+   4. Hacer clic en "MongoDB"
+
+   5. Si MongoDB está ejecutándose, la app se abre
+      Si no está ejecutándose, muestra un mensaje de error
+
+
+📋 EJEMPLO DE USO COMPLETO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ESCENARIO: Usar MongoDB con datos de ejemplo
+
+   Paso 1: Cambiar configuración
+   ─────────────────────────────
+   .\cambiar-mongodb.ps1
+
+   Paso 2: Importar datos
+   ──────────────────────
+   cd mongodb
+   .\importar-mongodb.ps1
+
+   Paso 3: Ejecutar aplicación
+   ───────────────────────────
+   cd ..
+   $env:JAVA_HOME = "C:\Program Files\Java\jdk-21"
+   .\mvnw.cmd javafx:run
+
+   Paso 4: En el diálogo, clic en "MongoDB"
+   ────────────────────────────────────────
+   [MySQL]  [SQLite]  [MongoDB] ← CLIC AQUÍ
+
+   Paso 5: ¡Aplicación abierta con MongoDB!
+   ────────────────────────────────────────
+   Título: "Sistema de Taller - MONGODB"
+
+
+✅ VERIFICACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Estado actual:
+
+   ✅ Botón MongoDB agregado al código
+   ✅ Compilación exitosa sin errores
+   ✅ Lógica de detección implementada
+   ✅ ConfigDB actualizado para MongoDB
+   ✅ ConexionMongo creada y funcional
+   ✅ Mensajes de error personalizados
+   ✅ Scripts de cambio rápido disponibles
+
+
+📸 ASPECTO VISUAL DEL DIÁLOGO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+El diálogo tendrá este aspecto en pantalla:
+
+    ╔════════════════════════════════════════════╗
+    ║          Sistema de Taller                 ║
+    ╠════════════════════════════════════════════╣
+    ║                                            ║
+    ║    📊 Seleccionar Base de Datos            ║
+    ║                                            ║
+    ║    MySQL: Requiere servidor MySQL activo   ║
+    ║    SQLite: Base de datos local             ║
+    ║    MongoDB: Requiere servidor MongoDB      ║
+    ║                                            ║
+    ╠════════════════════════════════════════════╣
+    ║                                            ║
+    ║   ┌─────────┐ ┌─────────┐ ┌──────────┐   ║
+    ║   │  MySQL  │ │ SQLite  │ │ MongoDB  │   ║
+    ║   └─────────┘ └─────────┘ └──────────┘   ║
+    ║                                            ║
+    ╚════════════════════════════════════════════╝
+
+
+🎨 PERSONALIZACIÓN
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Si quieres cambiar el orden de los botones:
+
+   En Main.java, línea 29:
+
+   // Orden actual: MySQL - SQLite - MongoDB
+   seleccion.getButtonTypes().setAll(btnMySQL, btnSQLite, btnMongoDB);
+
+   // Para cambiar el orden (ejemplo):
+   // seleccion.getButtonTypes().setAll(btnMongoDB, btnSQLite, btnMySQL);
+
+
+💻 CÓDIGO COMPLETO DEL SELECTOR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// Crear los 3 botones
+ButtonType btnMySQL = new ButtonType("MySQL", ButtonBar.ButtonData.LEFT);
+ButtonType btnSQLite = new ButtonType("SQLite", ButtonBar.ButtonData.OTHER);
+ButtonType btnMongoDB = new ButtonType("MongoDB", ButtonBar.ButtonData.RIGHT);
+
+// Crear el diálogo
+Alert seleccion = new Alert(Alert.AlertType.CONFIRMATION);
+seleccion.setTitle("Sistema de Taller");
+seleccion.setHeaderText("Seleccionar Base de Datos");
+seleccion.setContentText(
+    "MySQL: Requiere servidor MySQL activo\n" +
+    "SQLite: Base de datos local (sin servidor)\n" +
+    "MongoDB: Requiere servidor MongoDB activo"
+);
+
+// Agregar los 3 botones al diálogo
+seleccion.getButtonTypes().setAll(btnMySQL, btnSQLite, btnMongoDB);
+
+// Mostrar y esperar respuesta
+Optional<ButtonType> resultado = seleccion.showAndWait();
+
+// Detectar cuál botón se presionó
+if (resultado.get() == btnSQLite) {
+    ConfigDB.setDbType("sqlite");
+} else if (resultado.get() == btnMongoDB) {
+    ConfigDB.setDbType("mongodb");  // ← NUEVO
+} else {
+    ConfigDB.setDbType("mysql");
+}
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+                    🎉 EL BOTÓN ESTÁ LISTO PARA USAR 🎉
+
+═══════════════════════════════════════════════════════════════════════════════
+
+Ejecuta la aplicación y verás el botón MongoDB funcionando perfectamente.
+
