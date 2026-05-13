@@ -74,18 +74,27 @@ public class ConfigDB {
     }
 
     /**
-     * Obtiene el host del servidor MySQL
+     * Obtiene el host del servidor (MySQL o MongoDB)
      */
     public static String getHost() {
         cargarConfiguracion();
+        String dbType = getDbType();
+        if ("mongodb".equals(dbType)) {
+            return properties.getProperty("mongodb.host", 
+                   properties.getProperty("db.host", DEFAULT_HOST));
+        }
         return properties.getProperty("db.host", DEFAULT_HOST);
     }
 
     /**
-     * Obtiene el puerto del servidor MySQL
+     * Obtiene el puerto del servidor (MySQL o MongoDB)
      */
     public static String getPort() {
         cargarConfiguracion();
+        String dbType = getDbType();
+        if ("mongodb".equals(dbType)) {
+            return properties.getProperty("mongodb.port", DEFAULT_MONGO_PORT);
+        }
         return properties.getProperty("db.port", DEFAULT_PORT);
     }
 
@@ -94,22 +103,37 @@ public class ConfigDB {
      */
     public static String getDatabase() {
         cargarConfiguracion();
+        String dbType = getDbType();
+        if ("mongodb".equals(dbType)) {
+            return properties.getProperty("mongodb.name",
+                   properties.getProperty("db.name", DEFAULT_DATABASE));
+        }
         return properties.getProperty("db.name", DEFAULT_DATABASE);
     }
 
     /**
-     * Obtiene el usuario de MySQL
+     * Obtiene el usuario (MySQL o MongoDB)
      */
     public static String getUser() {
         cargarConfiguracion();
+        String dbType = getDbType();
+        if ("mongodb".equals(dbType)) {
+            return properties.getProperty("mongodb.user",
+                   properties.getProperty("db.user", ""));
+        }
         return properties.getProperty("db.user", DEFAULT_USER);
     }
 
     /**
-     * Obtiene la contraseña de MySQL
+     * Obtiene la contraseña (MySQL o MongoDB)
      */
     public static String getPassword() {
         cargarConfiguracion();
+        String dbType = getDbType();
+        if ("mongodb".equals(dbType)) {
+            return properties.getProperty("mongodb.password",
+                   properties.getProperty("db.password", ""));
+        }
         return properties.getProperty("db.password", DEFAULT_PASSWORD);
     }
 
@@ -136,9 +160,16 @@ public class ConfigDB {
             // Para MongoDB, retornar la URI de conexión
             return getMongoURI();
         } else {
-            // Para MySQL (por defecto)
+            // Para MySQL (por defecto) con parámetros optimizados
             return "jdbc:mysql://" + getHost() + ":" + getPort() + "/" + 
-                   getDatabase() + "?useSSL=false&serverTimezone=UTC";
+                   getDatabase() + 
+                   "?useSSL=false" +
+                   "&serverTimezone=UTC" +
+                   "&autoReconnect=true" +
+                   "&maxReconnects=3" +
+                   "&initialTimeout=2" +
+                   "&useUnicode=true" +
+                   "&characterEncoding=UTF-8";
         }
     }
     
