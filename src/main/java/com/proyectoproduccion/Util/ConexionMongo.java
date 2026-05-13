@@ -16,6 +16,7 @@ public class ConexionMongo {
     
     private static MongoClient mongoClient = null;
     private static MongoDatabase database = null;
+    private static String ultimoErrorDetalle = "";
     
     /**
      * Obtiene la conexión a MongoDB (Singleton)
@@ -34,21 +35,29 @@ public class ConexionMongo {
         try {
             String uri = ConfigDB.getMongoURI();
             String dbName = ConfigDB.getDatabase();
+            ultimoErrorDetalle = "";
             
             ConnectionString connectionString = new ConnectionString(uri);
             MongoClientSettings settings = MongoClientSettings.builder()
                     .applyConnectionString(connectionString)
+                    .applyToClusterSettings(builder ->
+                        builder.serverSelectionTimeout(5, TimeUnit.SECONDS))
+                    .applyToSocketSettings(builder ->
+                        builder.connectTimeout(5, TimeUnit.SECONDS))
                     .applyToConnectionPoolSettings(builder -> 
                         builder.maxConnectionIdleTime(60000, TimeUnit.MILLISECONDS))
                     .build();
             
             mongoClient = MongoClients.create(settings);
             database = mongoClient.getDatabase(dbName);
+            // Fuerza validación temprana del servidor para no dejar error oculto.
+            database.runCommand(new Document("ping", 1));
             
             System.out.println("✓ Conexión a MongoDB establecida: " + dbName);
             
         } catch (Exception e) {
-            System.err.println("✗ Error al conectar a MongoDB: " + e.getMessage());
+            ultimoErrorDetalle = construirDetalleError(e);
+            System.err.println("✗ Error al conectar a MongoDB: " + ultimoErrorDetalle);
             throw new RuntimeException("No se pudo conectar a MongoDB", e);
         }
     }
@@ -71,9 +80,22 @@ public class ConexionMongo {
             return true;
             
         } catch (Exception e) {
-            System.err.println("✗ Error al probar conexión MongoDB: " + e.getMessage());
+            ultimoErrorDetalle = construirDetalleError(e);
+            System.err.println("✗ Error al probar conexión MongoDB: " + ultimoErrorDetalle);
             return false;
         }
+    }
+
+    public static String getUltimoErrorDetalle() {
+        return ultimoErrorDetalle;
+    }
+
+    private static String construirDetalleError(Exception e) {
+        Throwable root = e;
+        while (root.getCause() != null) {
+            root = root.getCause();
+        }
+        return root.getClass().getSimpleName() + ": " + root.getMessage();
     }
     
     /**
@@ -134,6 +156,7 @@ public class ConexionMongo {
                 mongoClient.close();
                 mongoClient = null;
                 database = null;
+                ultimoErrorDetalle = "";
                 System.out.println("✓ Conexión MongoDB cerrada");
             } catch (Exception e) {
                 System.err.println("Error al cerrar conexión MongoDB: " + e.getMessage());

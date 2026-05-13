@@ -2,6 +2,7 @@ package com.proyectoproduccion;
 
 import com.proyectoproduccion.Util.Conexion;
 import com.proyectoproduccion.Util.ConfigDB;
+import com.proyectoproduccion.Util.ConexionMongo;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -82,12 +83,14 @@ public class Main extends Application {
                     "Usuario: " + ConfigDB.getUser()
                 );
             } else if ("mongodb".equals(ConfigDB.getDbType())) {
+                String detalleMongo = ConexionMongo.getUltimoErrorDetalle();
                 alert.setContentText(
                     "Verifica que:\n" +
                     "1. MongoDB este ejecutandose\n" +
                     "2. Los datos en database.properties sean correctos\n" +
                     "3. La base de datos 'taller_db' exista\n\n" +
-                    "Host: " + ConfigDB.getHost() + ":" + ConfigDB.getPort()
+                    "Host: " + ConfigDB.getHost() + ":" + ConfigDB.getPort() +
+                    (detalleMongo == null || detalleMongo.isEmpty() ? "" : "\nDetalle: " + detalleMongo)
                 );
             } else {
                 alert.setContentText(

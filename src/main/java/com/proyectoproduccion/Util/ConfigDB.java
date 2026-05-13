@@ -3,6 +3,7 @@ package com.proyectoproduccion.Util;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -24,7 +25,11 @@ public class ConfigDB {
     private static final String DEFAULT_DB_TYPE = "mysql";
 
     public static void setDbType(String tipo) {
-        tipoSeleccionado = tipo.toLowerCase();
+        if (tipo == null || tipo.trim().isEmpty()) {
+            tipoSeleccionado = null;
+            return;
+        }
+        tipoSeleccionado = tipo.trim().toLowerCase();
     }
 
     public static void cargarConfiguracion() {
@@ -37,6 +42,7 @@ public class ConfigDB {
             InputStream input = new FileInputStream("database.properties");
             properties.load(input);
             input.close();
+            normalizarPropiedades();
             cargado = true;
             System.out.println("✓ Configuración cargada desde database.properties");
         } catch (IOException e) {
@@ -46,6 +52,7 @@ public class ConfigDB {
                 if (input != null) {
                     properties.load(input);
                     input.close();
+                    normalizarPropiedades();
                     cargado = true;
                     System.out.println("✓ Configuración cargada desde resources/database.properties");
                 } else {
@@ -74,16 +81,38 @@ public class ConfigDB {
     }
 
     /**
+     * Evita problemas por espacios accidentales en claves/valores del properties.
+     */
+    private static void normalizarPropiedades() {
+        Properties normalizadas = new Properties();
+        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
+            String key = String.valueOf(entry.getKey()).trim();
+            String value = String.valueOf(entry.getValue()).trim();
+            normalizadas.setProperty(key, value);
+        }
+        properties = normalizadas;
+    }
+
+    private static String getTrimmedProperty(String key, String defaultValue) {
+        String value = properties.getProperty(key);
+        if (value == null) {
+            return defaultValue;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? defaultValue : trimmed;
+    }
+
+    /**
      * Obtiene el host del servidor (MySQL o MongoDB)
      */
     public static String getHost() {
         cargarConfiguracion();
         String dbType = getDbType();
         if ("mongodb".equals(dbType)) {
-            return properties.getProperty("mongodb.host", 
-                   properties.getProperty("db.host", DEFAULT_HOST));
+            return getTrimmedProperty("mongodb.host",
+                   getTrimmedProperty("db.host", DEFAULT_HOST));
         }
-        return properties.getProperty("db.host", DEFAULT_HOST);
+        return getTrimmedProperty("db.host", DEFAULT_HOST);
     }
 
     /**
@@ -93,9 +122,10 @@ public class ConfigDB {
         cargarConfiguracion();
         String dbType = getDbType();
         if ("mongodb".equals(dbType)) {
-            return properties.getProperty("mongodb.port", DEFAULT_MONGO_PORT);
+            return getTrimmedProperty("mongodb.port",
+                    getTrimmedProperty("db.port", DEFAULT_MONGO_PORT));
         }
-        return properties.getProperty("db.port", DEFAULT_PORT);
+        return getTrimmedProperty("db.port", DEFAULT_PORT);
     }
 
     /**
@@ -105,10 +135,10 @@ public class ConfigDB {
         cargarConfiguracion();
         String dbType = getDbType();
         if ("mongodb".equals(dbType)) {
-            return properties.getProperty("mongodb.name",
-                   properties.getProperty("db.name", DEFAULT_DATABASE));
+            return getTrimmedProperty("mongodb.name",
+                   getTrimmedProperty("db.name", DEFAULT_DATABASE));
         }
-        return properties.getProperty("db.name", DEFAULT_DATABASE);
+        return getTrimmedProperty("db.name", DEFAULT_DATABASE);
     }
 
     /**
@@ -118,10 +148,9 @@ public class ConfigDB {
         cargarConfiguracion();
         String dbType = getDbType();
         if ("mongodb".equals(dbType)) {
-            return properties.getProperty("mongodb.user",
-                   properties.getProperty("db.user", ""));
+            return getTrimmedProperty("mongodb.user", "");
         }
-        return properties.getProperty("db.user", DEFAULT_USER);
+        return getTrimmedProperty("db.user", DEFAULT_USER);
     }
 
     /**
@@ -131,10 +160,14 @@ public class ConfigDB {
         cargarConfiguracion();
         String dbType = getDbType();
         if ("mongodb".equals(dbType)) {
-            return properties.getProperty("mongodb.password",
-                   properties.getProperty("db.password", ""));
+            return getTrimmedProperty("mongodb.password", "");
         }
-        return properties.getProperty("db.password", DEFAULT_PASSWORD);
+        return getTrimmedProperty("db.password", DEFAULT_PASSWORD);
+    }
+
+    public static String getMongoAuthSource() {
+        cargarConfiguracion();
+        return getTrimmedProperty("mongodb.authSource", "admin");
     }
 
     public static String getDbType() {
@@ -142,7 +175,7 @@ public class ConfigDB {
             return tipoSeleccionado;
         }
         cargarConfiguracion();
-        return properties.getProperty("db.type", DEFAULT_DB_TYPE).toLowerCase();
+        return getTrimmedProperty("db.type", DEFAULT_DB_TYPE).toLowerCase();
     }
 
     /**
@@ -183,13 +216,14 @@ public class ConfigDB {
         String user = getUser();
         String password = getPassword();
         String database = getDatabase();
+        String authSource = getMongoAuthSource();
         
         // Si hay usuario y contraseña, incluirlos en la URI
         if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
-            return String.format("mongodb://%s:%s@%s:%s/%s?authSource=admin", 
-                user, password, host, port, database);
+            return String.format("mongodb://%s:%s@%s:%s/%s?authSource=%s",
+                user, password, host, port, database, authSource);
         } else {
-            return String.format("mongodb://%s:%s", host, port);
+            return String.format("mongodb://%s:%s/%s", host, port, database);
         }
     }
 
