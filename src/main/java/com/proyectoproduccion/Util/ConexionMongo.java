@@ -37,6 +37,10 @@ public class ConexionMongo {
             String dbName = ConfigDB.getDatabase();
             ultimoErrorDetalle = "";
             
+            System.out.println("→ Intentando conectar a MongoDB...");
+            System.out.println("  URI: " + uri.replaceAll(":[^:/@]+@", ":****@")); // Ocultar password
+            System.out.println("  Base de datos: " + dbName);
+            
             ConnectionString connectionString = new ConnectionString(uri);
             MongoClientSettings settings = MongoClientSettings.builder()
                     .applyConnectionString(connectionString)
@@ -50,7 +54,8 @@ public class ConexionMongo {
             
             mongoClient = MongoClients.create(settings);
             database = mongoClient.getDatabase(dbName);
-            // Fuerza validación temprana del servidor para no dejar error oculto.
+            
+            // Fuerza validación temprana del servidor
             database.runCommand(new Document("ping", 1));
             
             System.out.println("✓ Conexión a MongoDB establecida: " + dbName);
@@ -58,7 +63,13 @@ public class ConexionMongo {
         } catch (Exception e) {
             ultimoErrorDetalle = construirDetalleError(e);
             System.err.println("✗ Error al conectar a MongoDB: " + ultimoErrorDetalle);
-            throw new RuntimeException("No se pudo conectar a MongoDB", e);
+            System.err.println("  Causas posibles:");
+            System.err.println("  - MongoDB no está corriendo");
+            System.err.println("  - Host/Puerto incorrectos en database.properties");
+            System.err.println("  - Firewall bloqueando la conexión");
+            // NO lanzar excepción, solo devolver null
+            database = null;
+            mongoClient = null;
         }
     }
     

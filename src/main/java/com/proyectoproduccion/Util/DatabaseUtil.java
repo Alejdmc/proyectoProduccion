@@ -95,6 +95,9 @@ public class DatabaseUtil {
             
             collection.insertOne(doc);
             c.setId(nuevoId);
+            
+            // Auditoría
+            AuditoriaService.registrarCreacion("clientes", String.valueOf(nuevoId), AuditoriaService.clienteToMap(c));
         } catch (Exception e) {
             System.err.println("Error insertando cliente en MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -121,6 +124,9 @@ public class DatabaseUtil {
             if (keys.next()) {
                 c.setId(keys.getInt(1));
             }
+            
+            // Auditoría
+            AuditoriaService.registrarCreacion("clientes", String.valueOf(c.getId()), AuditoriaService.clienteToMap(c));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -140,6 +146,19 @@ public class DatabaseUtil {
             MongoDatabase db = ConexionMongo.getDatabase();
             MongoCollection<Document> collection = db.getCollection("clientes");
             
+            // Obtener datos anteriores
+            Document docAnterior = collection.find(new Document("_id", c.getId())).first();
+            Cliente anterior = null;
+            if (docAnterior != null) {
+                anterior = new Cliente(
+                    docAnterior.getInteger("_id", 0),
+                    docAnterior.getString("nombre"),
+                    docAnterior.getString("telefono"),
+                    docAnterior.getString("email"),
+                    docAnterior.getString("direccion")
+                );
+            }
+            
             Document filtro = new Document("_id", c.getId());
             Document update = new Document("$set", new Document()
                     .append("nombre", c.getNombre())
@@ -148,6 +167,12 @@ public class DatabaseUtil {
                     .append("direccion", c.getDireccion()));
             
             collection.updateOne(filtro, update);
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarActualizacion("clientes", String.valueOf(c.getId()), 
+                    AuditoriaService.clienteToMap(anterior), AuditoriaService.clienteToMap(c));
+            }
         } catch (Exception e) {
             System.err.println("Error actualizando cliente en MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -155,6 +180,9 @@ public class DatabaseUtil {
     }
 
     private static void actualizarClienteSQL(Cliente c) {
+        // Obtener datos anteriores para auditoría
+        Cliente anterior = obtenerClientePorId(c.getId());
+        
         String sql = "UPDATE clientes SET nombre=?, telefono=?, email=?, direccion=? WHERE id=?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -168,6 +196,12 @@ public class DatabaseUtil {
             // Asegurar commit
             if (!conn.getAutoCommit()) {
                 conn.commit();
+            }
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarActualizacion("clientes", String.valueOf(c.getId()), 
+                    AuditoriaService.clienteToMap(anterior), AuditoriaService.clienteToMap(c));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -186,7 +220,27 @@ public class DatabaseUtil {
         try {
             MongoDatabase db = ConexionMongo.getDatabase();
             MongoCollection<Document> collection = db.getCollection("clientes");
+            
+            // Obtener datos anteriores
+            Document docAnterior = collection.find(new Document("_id", id)).first();
+            Cliente anterior = null;
+            if (docAnterior != null) {
+                anterior = new Cliente(
+                    docAnterior.getInteger("_id", 0),
+                    docAnterior.getString("nombre"),
+                    docAnterior.getString("telefono"),
+                    docAnterior.getString("email"),
+                    docAnterior.getString("direccion")
+                );
+            }
+            
             collection.deleteOne(new Document("_id", id));
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarEliminacion("clientes", String.valueOf(id), 
+                    AuditoriaService.clienteToMap(anterior));
+            }
         } catch (Exception e) {
             System.err.println("Error eliminando cliente de MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -194,6 +248,9 @@ public class DatabaseUtil {
     }
 
     private static void eliminarClienteSQL(int id) {
+        // Obtener datos anteriores para auditoría
+        Cliente anterior = obtenerClientePorId(id);
+        
         String sql = "DELETE FROM clientes WHERE id=?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -203,6 +260,12 @@ public class DatabaseUtil {
             // Asegurar commit
             if (!conn.getAutoCommit()) {
                 conn.commit();
+            }
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarEliminacion("clientes", String.valueOf(id), 
+                    AuditoriaService.clienteToMap(anterior));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -349,6 +412,9 @@ public class DatabaseUtil {
             
             collection.insertOne(doc);
             v.setId(nuevoId);
+            
+            // Auditoría
+            AuditoriaService.registrarCreacion("vehiculos", String.valueOf(nuevoId), AuditoriaService.vehiculoToMap(v));
         } catch (Exception e) {
             System.err.println("Error insertando vehículo en MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -376,6 +442,9 @@ public class DatabaseUtil {
             if (keys.next()) {
                 v.setId(keys.getInt(1));
             }
+            
+            // Auditoría
+            AuditoriaService.registrarCreacion("vehiculos", String.valueOf(v.getId()), AuditoriaService.vehiculoToMap(v));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -395,6 +464,20 @@ public class DatabaseUtil {
             MongoDatabase db = ConexionMongo.getDatabase();
             MongoCollection<Document> collection = db.getCollection("vehiculos");
             
+            // Obtener datos anteriores
+            Document docAnterior = collection.find(new Document("_id", v.getId())).first();
+            Vehiculo anterior = null;
+            if (docAnterior != null) {
+                anterior = new Vehiculo(
+                    docAnterior.getInteger("_id", 0),
+                    docAnterior.getString("placa"),
+                    docAnterior.getString("marca"),
+                    docAnterior.getString("modelo"),
+                    docAnterior.getInteger("anio", 0),
+                    docAnterior.getInteger("cliente_id", 0)
+                );
+            }
+            
             Document filtro = new Document("_id", v.getId());
             Document update = new Document("$set", new Document()
                     .append("placa", v.getPlaca())
@@ -404,6 +487,12 @@ public class DatabaseUtil {
                     .append("cliente_id", v.getClienteId()));
             
             collection.updateOne(filtro, update);
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarActualizacion("vehiculos", String.valueOf(v.getId()), 
+                    AuditoriaService.vehiculoToMap(anterior), AuditoriaService.vehiculoToMap(v));
+            }
         } catch (Exception e) {
             System.err.println("Error actualizando vehículo en MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -411,6 +500,9 @@ public class DatabaseUtil {
     }
 
     private static void actualizarVehiculoSQL(Vehiculo v) {
+        // Obtener datos anteriores
+        Vehiculo anterior = obtenerVehiculoPorId(v.getId());
+        
         String sql = "UPDATE vehiculos SET placa=?, marca=?, modelo=?, anio=?, cliente_id=? WHERE id=?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -425,6 +517,12 @@ public class DatabaseUtil {
             // Asegurar commit
             if (!conn.getAutoCommit()) {
                 conn.commit();
+            }
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarActualizacion("vehiculos", String.valueOf(v.getId()), 
+                    AuditoriaService.vehiculoToMap(anterior), AuditoriaService.vehiculoToMap(v));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -443,7 +541,28 @@ public class DatabaseUtil {
         try {
             MongoDatabase db = ConexionMongo.getDatabase();
             MongoCollection<Document> collection = db.getCollection("vehiculos");
+            
+            // Obtener datos anteriores
+            Document docAnterior = collection.find(new Document("_id", id)).first();
+            Vehiculo anterior = null;
+            if (docAnterior != null) {
+                anterior = new Vehiculo(
+                    docAnterior.getInteger("_id", 0),
+                    docAnterior.getString("placa"),
+                    docAnterior.getString("marca"),
+                    docAnterior.getString("modelo"),
+                    docAnterior.getInteger("anio", 0),
+                    docAnterior.getInteger("cliente_id", 0)
+                );
+            }
+            
             collection.deleteOne(new Document("_id", id));
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarEliminacion("vehiculos", String.valueOf(id), 
+                    AuditoriaService.vehiculoToMap(anterior));
+            }
         } catch (Exception e) {
             System.err.println("Error eliminando vehículo de MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -451,6 +570,9 @@ public class DatabaseUtil {
     }
 
     private static void eliminarVehiculoSQL(int id) {
+        // Obtener datos anteriores
+        Vehiculo anterior = obtenerVehiculoPorId(id);
+        
         String sql = "DELETE FROM vehiculos WHERE id=?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -460,6 +582,12 @@ public class DatabaseUtil {
             // Asegurar commit
             if (!conn.getAutoCommit()) {
                 conn.commit();
+            }
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarEliminacion("vehiculos", String.valueOf(id), 
+                    AuditoriaService.vehiculoToMap(anterior));
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -597,6 +725,9 @@ public class DatabaseUtil {
             
             collection.insertOne(doc);
             o.setId(nuevoId);
+            
+            // Auditoría
+            AuditoriaService.registrarCreacion("ordenes", String.valueOf(nuevoId), AuditoriaService.ordenToMap(o));
         } catch (Exception e) {
             System.err.println("Error insertando orden en MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -631,6 +762,9 @@ public class DatabaseUtil {
             if (keys.next()) {
                 o.setId(keys.getInt(1));
             }
+            
+            // Auditoría
+            AuditoriaService.registrarCreacion("ordenes", String.valueOf(o.getId()), AuditoriaService.ordenToMap(o));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -650,6 +784,25 @@ public class DatabaseUtil {
             MongoDatabase db = ConexionMongo.getDatabase();
             MongoCollection<Document> collection = db.getCollection("ordenes");
             
+            // Obtener datos anteriores
+            Document docAnterior = collection.find(new Document("_id", o.getId())).first();
+            Orden anterior = null;
+            if (docAnterior != null) {
+                anterior = new Orden(
+                    docAnterior.getInteger("_id", 0),
+                    docAnterior.getInteger("cliente_id", 0),
+                    docAnterior.getInteger("vehiculo_id", 0),
+                    docAnterior.getString("estado")
+                );
+                anterior.setCostoRepuestos(docAnterior.getDouble("costo_repuestos"));
+                anterior.setHorasTrabajo(docAnterior.getDouble("horas_trabajo"));
+                anterior.setCostoHora(docAnterior.getDouble("costo_hora"));
+                anterior.setManoObra(docAnterior.getDouble("mano_obra"));
+                anterior.setSubtotal(docAnterior.getDouble("subtotal"));
+                anterior.setIva(docAnterior.getDouble("iva"));
+                anterior.setTotal(docAnterior.getDouble("total"));
+            }
+            
             Document filtro = new Document("_id", o.getId());
             Document update = new Document("$set", new Document()
                     .append("cliente_id", o.getClienteId())
@@ -664,6 +817,12 @@ public class DatabaseUtil {
                     .append("total", o.getTotal()));
             
             collection.updateOne(filtro, update);
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarActualizacion("ordenes", String.valueOf(o.getId()), 
+                    AuditoriaService.ordenToMap(anterior), AuditoriaService.ordenToMap(o));
+            }
         } catch (Exception e) {
             System.err.println("Error actualizando orden en MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -671,6 +830,9 @@ public class DatabaseUtil {
     }
 
     private static void actualizarOrdenSQL(Orden o) {
+        // Obtener datos anteriores
+        Orden anterior = obtenerOrdenPorId(o.getId());
+        
         String sql = "UPDATE ordenes SET cliente_id=?, vehiculo_id=?, estado=?, costo_repuestos=?, " +
                      "horas_trabajo=?, costo_hora=?, mano_obra=?, subtotal=?, iva=?, total=? WHERE id=?";
         try (Connection conn = Conexion.getConnection();
@@ -692,6 +854,12 @@ public class DatabaseUtil {
             if (!conn.getAutoCommit()) {
                 conn.commit();
             }
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarActualizacion("ordenes", String.valueOf(o.getId()), 
+                    AuditoriaService.ordenToMap(anterior), AuditoriaService.ordenToMap(o));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -709,7 +877,33 @@ public class DatabaseUtil {
         try {
             MongoDatabase db = ConexionMongo.getDatabase();
             MongoCollection<Document> collection = db.getCollection("ordenes");
+            
+            // Obtener datos anteriores
+            Document docAnterior = collection.find(new Document("_id", id)).first();
+            Orden anterior = null;
+            if (docAnterior != null) {
+                anterior = new Orden(
+                    docAnterior.getInteger("_id", 0),
+                    docAnterior.getInteger("cliente_id", 0),
+                    docAnterior.getInteger("vehiculo_id", 0),
+                    docAnterior.getString("estado")
+                );
+                anterior.setCostoRepuestos(docAnterior.getDouble("costo_repuestos"));
+                anterior.setHorasTrabajo(docAnterior.getDouble("horas_trabajo"));
+                anterior.setCostoHora(docAnterior.getDouble("costo_hora"));
+                anterior.setManoObra(docAnterior.getDouble("mano_obra"));
+                anterior.setSubtotal(docAnterior.getDouble("subtotal"));
+                anterior.setIva(docAnterior.getDouble("iva"));
+                anterior.setTotal(docAnterior.getDouble("total"));
+            }
+            
             collection.deleteOne(new Document("_id", id));
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarEliminacion("ordenes", String.valueOf(id), 
+                    AuditoriaService.ordenToMap(anterior));
+            }
         } catch (Exception e) {
             System.err.println("Error eliminando orden de MongoDB: " + e.getMessage());
             e.printStackTrace();
@@ -717,6 +911,9 @@ public class DatabaseUtil {
     }
 
     private static void eliminarOrdenSQL(int id) {
+        // Obtener datos anteriores
+        Orden anterior = obtenerOrdenPorId(id);
+        
         String sql = "DELETE FROM ordenes WHERE id=?";
         try (Connection conn = Conexion.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -727,9 +924,178 @@ public class DatabaseUtil {
             if (!conn.getAutoCommit()) {
                 conn.commit();
             }
+            
+            // Auditoría
+            if (anterior != null) {
+                AuditoriaService.registrarEliminacion("ordenes", String.valueOf(id), 
+                    AuditoriaService.ordenToMap(anterior));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    // ==================== MÉTODOS AUXILIARES PARA AUDITORÍA ====================
+    
+    private static Cliente obtenerClientePorId(int id) {
+        if (esMongoDB()) {
+            return obtenerClientePorIdMongo(id);
+        }
+        return obtenerClientePorIdSQL(id);
+    }
+    
+    private static Cliente obtenerClientePorIdSQL(int id) {
+        String sql = "SELECT id, nombre, telefono, email, direccion FROM clientes WHERE id=?";
+        try (Connection conn = Conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Cliente(
+                    rs.getInt("id"),
+                    rs.getString("nombre"),
+                    rs.getString("telefono"),
+                    rs.getString("email"),
+                    rs.getString("direccion")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    private static Cliente obtenerClientePorIdMongo(int id) {
+        try {
+            MongoDatabase db = ConexionMongo.getDatabase();
+            MongoCollection<Document> collection = db.getCollection("clientes");
+            Document doc = collection.find(new Document("_id", id)).first();
+            if (doc != null) {
+                return new Cliente(
+                    doc.getInteger("_id", 0),
+                    doc.getString("nombre"),
+                    doc.getString("telefono"),
+                    doc.getString("email"),
+                    doc.getString("direccion")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    private static Vehiculo obtenerVehiculoPorId(int id) {
+        if (esMongoDB()) {
+            return obtenerVehiculoPorIdMongo(id);
+        }
+        return obtenerVehiculoPorIdSQL(id);
+    }
+    
+    private static Vehiculo obtenerVehiculoPorIdSQL(int id) {
+        String sql = "SELECT id, placa, marca, modelo, anio, cliente_id FROM vehiculos WHERE id=?";
+        try (Connection conn = Conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return new Vehiculo(
+                    rs.getInt("id"),
+                    rs.getString("placa"),
+                    rs.getString("marca"),
+                    rs.getString("modelo"),
+                    rs.getInt("anio"),
+                    rs.getInt("cliente_id")
+                );
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    private static Vehiculo obtenerVehiculoPorIdMongo(int id) {
+        try {
+            MongoDatabase db = ConexionMongo.getDatabase();
+            MongoCollection<Document> collection = db.getCollection("vehiculos");
+            Document doc = collection.find(new Document("_id", id)).first();
+            if (doc != null) {
+                return new Vehiculo(
+                    doc.getInteger("_id", 0),
+                    doc.getString("placa"),
+                    doc.getString("marca"),
+                    doc.getString("modelo"),
+                    doc.getInteger("anio", 0),
+                    doc.getInteger("cliente_id", 0)
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    private static Orden obtenerOrdenPorId(int id) {
+        if (esMongoDB()) {
+            return obtenerOrdenPorIdMongo(id);
+        }
+        return obtenerOrdenPorIdSQL(id);
+    }
+    
+    private static Orden obtenerOrdenPorIdSQL(int id) {
+        String sql = "SELECT id, cliente_id, vehiculo_id, estado, costo_repuestos, horas_trabajo, " +
+                     "costo_hora, mano_obra, subtotal, iva, total FROM ordenes WHERE id=?";
+        try (Connection conn = Conexion.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Orden o = new Orden(
+                    rs.getInt("id"),
+                    rs.getInt("cliente_id"),
+                    rs.getInt("vehiculo_id"),
+                    rs.getString("estado")
+                );
+                o.setCostoRepuestos(rs.getDouble("costo_repuestos"));
+                o.setHorasTrabajo(rs.getDouble("horas_trabajo"));
+                o.setCostoHora(rs.getDouble("costo_hora"));
+                o.setManoObra(rs.getDouble("mano_obra"));
+                o.setSubtotal(rs.getDouble("subtotal"));
+                o.setIva(rs.getDouble("iva"));
+                o.setTotal(rs.getDouble("total"));
+                return o;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+    
+    private static Orden obtenerOrdenPorIdMongo(int id) {
+        try {
+            MongoDatabase db = ConexionMongo.getDatabase();
+            MongoCollection<Document> collection = db.getCollection("ordenes");
+            Document doc = collection.find(new Document("_id", id)).first();
+            if (doc != null) {
+                Orden o = new Orden(
+                    doc.getInteger("_id", 0),
+                    doc.getInteger("cliente_id", 0),
+                    doc.getInteger("vehiculo_id", 0),
+                    doc.getString("estado")
+                );
+                o.setCostoRepuestos(doc.getDouble("costo_repuestos"));
+                o.setHorasTrabajo(doc.getDouble("horas_trabajo"));
+                o.setCostoHora(doc.getDouble("costo_hora"));
+                o.setManoObra(doc.getDouble("mano_obra"));
+                o.setSubtotal(doc.getDouble("subtotal"));
+                o.setIva(doc.getDouble("iva"));
+                o.setTotal(doc.getDouble("total"));
+                return o;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
 

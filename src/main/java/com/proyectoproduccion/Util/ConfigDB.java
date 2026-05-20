@@ -208,15 +208,20 @@ public class ConfigDB {
     
     /**
      * Obtiene la URI de conexión para MongoDB
+     * Siempre lee los valores de mongodb.* independientemente del tipo de BD principal
      */
     public static String getMongoURI() {
         cargarConfiguracion();
-        String host = getHost();
-        String port = getPort();
-        String user = getUser();
-        String password = getPassword();
-        String database = getDatabase();
-        String authSource = getMongoAuthSource();
+        
+        // Leer directamente las propiedades de MongoDB
+        String host = getTrimmedProperty("mongodb.host", 
+                     getTrimmedProperty("db.host", DEFAULT_HOST));
+        String port = getTrimmedProperty("mongodb.port", DEFAULT_MONGO_PORT);
+        String database = getTrimmedProperty("mongodb.name", 
+                         getTrimmedProperty("db.name", DEFAULT_DATABASE));
+        String user = getTrimmedProperty("mongodb.user", "");
+        String password = getTrimmedProperty("mongodb.password", "");
+        String authSource = getTrimmedProperty("mongodb.authSource", "admin");
         
         // Si hay usuario y contraseña, incluirlos en la URI
         if (user != null && !user.isEmpty() && password != null && !password.isEmpty()) {
@@ -225,6 +230,14 @@ public class ConfigDB {
         } else {
             return String.format("mongodb://%s:%s/%s", host, port, database);
         }
+    }
+
+    /**
+     * Obtiene una propiedad específica del archivo de configuración
+     */
+    public static String getProperty(String key, String defaultValue) {
+        cargarConfiguracion();
+        return properties.getProperty(key, defaultValue);
     }
 
     public static void mostrarConfiguracion() {

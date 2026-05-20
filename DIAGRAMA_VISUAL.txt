@@ -1,0 +1,199 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║         ✅ SISTEMA DE AUDITORÍA DUAL IMPLEMENTADO            ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+┌───────────────────────────────────────────────────────────────┐
+│                                                               │
+│                  🎯 CONCEPTO PRINCIPAL                        │
+│                                                               │
+│   Datos operacionales → MySQL o SQLite                       │
+│                                                               │
+│   Auditoría (historial) → MongoDB                            │
+│                                                               │
+└───────────────────────────────────────────────────────────────┘
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║                    EJEMPLO: USAR MYSQL                        ║
+╠═══════════════════════════════════════════════════════════════╣
+║                                                               ║
+║  1. Usuario crea un cliente "Juan Pérez"                     ║
+║                                                               ║
+║     ┌──────────────────────────────────────┐                 ║
+║     │    DatabaseUtil.insertarCliente()    │                 ║
+║     └───────────┬──────────────────────────┘                 ║
+║                 │                                             ║
+║        ┌────────┴─────────┐                                  ║
+║        │                  │                                   ║
+║        ↓                  ↓                                   ║
+║   ┌─────────┐      ┌─────────────┐                          ║
+║   │  MYSQL  │      │   MONGODB   │                          ║
+║   │         │      │ (auditoría) │                          ║
+║   │ Cliente │      │             │                          ║
+║   │ guardado│      │  Registro:  │                          ║
+║   │ tabla   │      │  - CREATE   │                          ║
+║   │ clientes│      │  - Tabla    │                          ║
+║   │ ID: 25  │      │  - ID: 25   │                          ║
+║   │         │      │  - Datos    │                          ║
+║   └─────────┘      └─────────────┘                          ║
+║                                                               ║
+║  ✓ Datos en MySQL                                            ║
+║  ✓ Auditoría en MongoDB                                      ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║                   EJEMPLO: ACTUALIZAR                         ║
+╠═══════════════════════════════════════════════════════════════╣
+║                                                               ║
+║  2. Usuario cambia teléfono del cliente                      ║
+║                                                               ║
+║     ┌──────────────────────────────────────┐                 ║
+║     │   DatabaseUtil.actualizarCliente()   │                 ║
+║     └───────────┬──────────────────────────┘                 ║
+║                 │                                             ║
+║        ┌────────┴─────────┐                                  ║
+║        │                  │                                   ║
+║        ↓                  ↓                                   ║
+║   ┌─────────┐      ┌─────────────────────────┐              ║
+║   │  MYSQL  │      │      MONGODB            │              ║
+║   │         │      │    (auditoría)          │              ║
+║   │ Cliente │      │                         │              ║
+║   │ actualiz│      │  Registro:              │              ║
+║   │ teléfono│      │  - UPDATE               │              ║
+║   │ nuevo   │      │  - datosAnteriores:     │              ║
+║   │         │      │    tel: "310-555-1234"  │              ║
+║   │         │      │  - datosNuevos:         │              ║
+║   │         │      │    tel: "320-999-8888"  │              ║
+║   └─────────┘      └─────────────────────────┘              ║
+║                                                               ║
+║  ✓ Cambio en MySQL                                           ║
+║  ✓ Historial de cambio en MongoDB (antes + después)         ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║                    EJEMPLO: ELIMINAR                          ║
+╠═══════════════════════════════════════════════════════════════╣
+║                                                               ║
+║  3. Usuario elimina el cliente                               ║
+║                                                               ║
+║     ┌──────────────────────────────────────┐                 ║
+║     │    DatabaseUtil.eliminarCliente()    │                 ║
+║     └───────────┬──────────────────────────┘                 ║
+║                 │                                             ║
+║        ┌────────┴─────────┐                                  ║
+║        │                  │                                   ║
+║        ↓                  ↓                                   ║
+║   ┌─────────┐      ┌─────────────────────────┐              ║
+║   │  MYSQL  │      │      MONGODB            │              ║
+║   │         │      │    (auditoría)          │              ║
+║   │ Cliente │      │                         │              ║
+║   │ ELIMINADO     │  Registro:              │              ║
+║   │ (ya no   │      │  - DELETE               │              ║
+║   │  existe) │      │  - datosAnteriores:     │              ║
+║   │         │      │    nombre: "Juan..."    │              ║
+║   │         │      │    tel: "320-999..."    │              ║
+║   │         │      │    email: "juan@..."    │              ║
+║   │         │      │    (TODOS LOS DATOS)    │              ║
+║   └─────────┘      └─────────────────────────┘              ║
+║                                                               ║
+║  ✓ Eliminado de MySQL (no recuperable)                      ║
+║  ✓ Guardado en MongoDB (recuperable desde auditoría)        ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+┌───────────────────────────────────────────────────────────────┐
+│                                                               │
+│                   📊 RESULTADO FINAL                          │
+│                                                               │
+│   MYSQL/SQLite:                                              │
+│   ├─ clientes (solo activos)                                │
+│   ├─ vehiculos (solo activos)                               │
+│   └─ ordenes (solo activas)                                 │
+│                                                               │
+│   MONGODB:                                                    │
+│   └─ auditoria (historial completo)                         │
+│      ├─ Todas las creaciones                                │
+│      ├─ Todos los cambios (antes + después)                 │
+│      └─ Todos los eliminados (datos guardados)              │
+│                                                               │
+└───────────────────────────────────────────────────────────────┘
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║                   ✅ VENTAJAS                                 ║
+║                                                               ║
+║   🔹 MySQL/SQLite → Rápido, transaccional                    ║
+║   🔹 MongoDB → Flexible, escalable para auditoría            ║
+║   🔹 Separación de datos operacionales vs históricos         ║
+║   🔹 Si MongoDB falla → La aplicación sigue funcionando      ║
+║   🔹 Datos eliminados → Siempre recuperables                 ║
+║   🔹 Todo automático → Sin código extra                      ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+┌───────────────────────────────────────────────────────────────┐
+│                                                               │
+│               🚀 CÓMO VERIFICAR                               │
+│                                                               │
+│  1. Ejecuta tu aplicación                                    │
+│  2. Selecciona MySQL o SQLite                                │
+│  3. Crea/actualiza/elimina algo                              │
+│  4. Verifica en MongoDB:                                     │
+│                                                               │
+│     mongosh --host 172.30.16.104                             │
+│     use taller_db                                            │
+│     db.auditoria.find().pretty()                             │
+│                                                               │
+│  ¡Verás los registros de auditoría!                          │
+│                                                               │
+└───────────────────────────────────────────────────────────────┘
+
+
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║              🎉 ¡YA ESTÁ IMPLEMENTADO!                        ║
+║                                                               ║
+║  ✓ Funciona con MySQL                                        ║
+║  ✓ Funciona con SQLite                                       ║
+║  ✓ Auditoría siempre en MongoDB                              ║
+║  ✓ 100% automático                                           ║
+║  ✓ Sin código adicional necesario                            ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+═══════════════════════════════════════════════════════════════
+                    ARCHIVOS IMPORTANTES
+═══════════════════════════════════════════════════════════════
+
+📄 COMO_FUNCIONA_AUDITORIA.md
+   → Explicación detallada con diagramas
+
+📄 EJEMPLO_MYSQL_AUDITORIA.md
+   → Ejemplo paso a paso con MySQL
+
+📄 CHECKLIST_VERIFICACION.md
+   → Pasos para verificar que funciona
+
+📄 ProbarAuditoria.java
+   → Script de prueba automático
+
+📄 mongodb/consultas-auditoria.js
+   → 40+ consultas útiles
+
+═══════════════════════════════════════════════════════════════
+
+                    ¡LISTO PARA USAR! 🚀
+
+═══════════════════════════════════════════════════════════════
+
